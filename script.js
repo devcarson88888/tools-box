@@ -17,17 +17,17 @@ const translations = {
   en: {
     home: "Home", allTools: "All tools", categories: "Categories", about: "About us", login: "Log in", signup: "Sign up",
     eyebrow: "Your digital toolbox", heroDescription: "A collection of handy, everyday tools designed to make your work a little lighter and your ideas a little clearer.",
-    explore: "Explore tools", why: "Why tools.box", people: "people", monthly: "use tools.box every month", findFlow: "Find your flow", curated: "Curated for you", viewAll: "View all tools", noClutter: "Good tools, no clutter", browse: "Browse the box", searchEyebrow: "Search the box", searchTitle: "What can we help<br /><em>you find?</em>", searchDescription: "Search by tool name, category, or what you need to get done.", searchPlaceholder: "Try “color”, “JSON”, or “time zone”", searchButton: "Search", results: "tools found", noResults: "No tools found. Try another search."
+    explore: "Explore tools", why: "Why tools.box", people: "people", monthly: "use tools.box every month", findFlow: "Find your flow", curated: "Curated for you", viewAll: "View all tools", noClutter: "Good tools, no clutter", browse: "Browse the box", backHome: "Back to home", searchEyebrow: "Search the box", searchTitle: "What can we help<br /><em>you find?</em>", searchDescription: "Search by tool name, category, or what you need to get done.", searchPlaceholder: "Try “color”, “JSON”, or “time zone”", searchButton: "Search", results: "tools found", noResults: "No tools found. Try another search."
   },
   zh: {
     home: "首页", allTools: "全部工具", categories: "分类", about: "关于我们", login: "登录", signup: "注册",
     eyebrow: "你的数字工具箱", heroDescription: "一系列实用的日常工具，让工作更轻松，让想法更清晰。",
-    explore: "探索工具", why: "为什么选择 tools.box", people: "位用户", monthly: "每月使用 tools.box", findFlow: "找到你的节奏", curated: "为你精选", viewAll: "查看全部工具", noClutter: "实用工具，没有杂乱", browse: "浏览工具箱", searchEyebrow: "搜索工具箱", searchTitle: "你想要<br /><em>找什么？</em>", searchDescription: "按工具名称、分类或任务搜索。", searchPlaceholder: "试试“颜色”、“JSON”或“时区”", searchButton: "搜索", results: "个工具", noResults: "没有找到工具，请换个关键词。"
+    explore: "探索工具", why: "为什么选择 tools.box", people: "位用户", monthly: "每月使用 tools.box", findFlow: "找到你的节奏", curated: "为你精选", viewAll: "查看全部工具", noClutter: "实用工具，没有杂乱", browse: "浏览工具箱", backHome: "返回首页", searchEyebrow: "搜索工具箱", searchTitle: "你想要<br /><em>找什么？</em>", searchDescription: "按工具名称、分类或任务搜索。", searchPlaceholder: "试试“颜色”、“JSON”或“时区”", searchButton: "搜索", results: "个工具", noResults: "没有找到工具，请换个关键词。"
   },
   es: {
     home: "Inicio", allTools: "Todas las herramientas", categories: "Categorías", about: "Sobre nosotros", login: "Entrar", signup: "Crear cuenta",
     eyebrow: "Tu caja de herramientas digital", heroDescription: "Una colección de herramientas cotidianas para aligerar tu trabajo y aclarar tus ideas.",
-    explore: "Explorar herramientas", why: "Por qué tools.box", people: "personas", monthly: "usan tools.box cada mes", findFlow: "Encuentra tu ritmo", curated: "Elegidas para ti", viewAll: "Ver todas", noClutter: "Buenas herramientas, sin ruido", browse: "Abrir la caja", searchEyebrow: "Buscar en la caja", searchTitle: "¿Qué podemos<br /><em>ayudarte a encontrar?</em>", searchDescription: "Busca por nombre, categoría o tarea.", searchPlaceholder: "Prueba “color”, “JSON” o “zona horaria”", searchButton: "Buscar", results: "herramientas encontradas", noResults: "No encontramos herramientas. Prueba otra búsqueda."
+    explore: "Explorar herramientas", why: "Por qué tools.box", people: "personas", monthly: "usan tools.box cada mes", findFlow: "Encuentra tu ritmo", curated: "Elegidas para ti", viewAll: "Ver todas", noClutter: "Buenas herramientas, sin ruido", browse: "Abrir la caja", backHome: "Volver al inicio", searchEyebrow: "Buscar en la caja", searchTitle: "¿Qué podemos<br /><em>ayudarte a encontrar?</em>", searchDescription: "Busca por nombre, categoría o tarea.", searchPlaceholder: "Prueba “color”, “JSON” o “zona horaria”", searchButton: "Buscar", results: "herramientas encontradas", noResults: "No encontramos herramientas. Prueba otra búsqueda."
   }
 };
 

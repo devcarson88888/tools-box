@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search the Useful Tools Box for the right tool." />
+    <title>Search tools — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="index.html#top" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span><span class="sr-only">Toggle navigation</span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a class="nav-link" href="index.html#top">Home</a>
+          <a class="nav-link active" href="search.html">All tools</a>
+          <a class="nav-link" href="index.html#categories">Categories</a>
+          <a class="nav-link" href="index.html#about">About us</a>
+          <div class="nav-actions">
+            <label class="language-picker">
+              <span class="sr-only">Language</span>
+              <select id="language-select" aria-label="Select language">
+                <option value="en">EN</option>
+                <option value="zh">中文</option>
+                <option value="es">ES</option>
+              </select>
+            </label>
+            <a class="login-link" href="#login">Log in</a>
+            <a class="button button-dark button-small" href="#signup">Sign up <span aria-hidden="true">↗</span></a>
+          </div>
+        </div>
+      </nav>
+
+      <main class="search-page">
+        <a class="back-link" href="index.html#top">← <span data-i18n="backHome">Back to home</span></a>
+        <section class="search-section" id="search" aria-labelledby="search-title">
+          <div class="search-heading">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="searchEyebrow">Search the box</span></div>
+              <h1 id="search-title"><span data-i18n="searchTitle">What can we help<br /><em>you find?</em></span></h1>
+            </div>
+            <p data-i18n="searchDescription">Search by tool name, category, or what you need to get done.</p>
+          </div>
+          <form class="search-form" id="tool-search-form" role="search">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="tool-search" type="search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Try “color”, “JSON”, or “time zone”" />
+            <button class="button button-dark button-small" type="submit"><span data-i18n="searchButton">Search</span> <span aria-hidden="true">↗</span></button>
+          </form>
+          <p class="search-status" id="search-status" aria-live="polite"></p>
+          <div class="search-results" id="search-results"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <a class="brand" href="index.html#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <p>Small tools. Big help.</p>
+        <span>© 2024 tools.box</span>
+      </footer>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
