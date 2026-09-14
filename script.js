@@ -30,8 +30,14 @@ const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
 const logoutButton = document.querySelector("#logout-button");
+const forgotPasswordLink = document.querySelector("#forgot-password");
 const logoutLabels = { en: "Log out", zh: "退出登录", es: "Cerrar sesión" };
 const welcomeLabels = { en: "Welcome", zh: "欢迎", es: "Bienvenido/a" };
+const resetMessages = {
+  en: { email: "Enter the email address you used to sign up:", sent: "Password reset email sent. Check your inbox.", missing: "Please enter an email address." },
+  zh: { email: "请输入注册时使用的邮箱：", sent: "密码重置邮件已发送，请检查收件箱。", missing: "请输入邮箱地址。" },
+  es: { email: "Introduce el correo que usaste para registrarte:", sent: "Correo de restablecimiento enviado. Revisa tu bandeja.", missing: "Introduce un correo electrónico." }
+};
 
 const translations = {
   en: {
@@ -119,6 +125,22 @@ logoutButton?.addEventListener("click", async () => {
   const { error } = await supabaseClient.auth.signOut();
   if (error) console.error("Unable to sign out", error);
   updateAccountUi(null);
+});
+
+forgotPasswordLink?.addEventListener("click", async (event) => {
+  event.preventDefault();
+  const language = languageSelect?.value || "en";
+  const email = window.prompt(resetMessages[language].email);
+  const feedback = document.querySelector("[data-auth-form='login'] .form-feedback");
+  if (!email?.trim()) {
+    if (feedback) feedback.textContent = resetMessages[language].missing;
+    return;
+  }
+  if (!supabaseClient) return;
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), {
+    redirectTo: "https://devcarson88888.github.io/tools-box/login.html"
+  });
+  if (feedback) feedback.textContent = error ? error.message : resetMessages[language].sent;
 });
 
 menuToggle?.addEventListener("click", () => {
