@@ -25,7 +25,13 @@ const authSuccess = {
 };
 const supabaseUrl = "https://svjbtfhbwpavpvrjfbbe.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2amJ0Zmhid3BhdnB2cmpmYmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODcwMDMsImV4cCI6MjEwNDk2MzAwM30.a7Iwkxj5sjVE_3YC1og-4_OAXi8Yhx5nkW6TVkIduNY";
-const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey);
+const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true
+  }
+});
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
@@ -115,8 +121,11 @@ function updateAccountUi(user) {
   }
 }
 
-if (supabaseClient && accountArea) {
-  supabaseClient.auth.getSession().then(({ data }) => updateAccountUi(data.session?.user));
+if (supabaseClient) {
+  supabaseClient.auth.getSession().then(({ data, error }) => {
+    if (error) console.error("Unable to restore session", error);
+    updateAccountUi(data.session?.user);
+  });
   supabaseClient.auth.onAuthStateChange((_event, session) => updateAccountUi(session?.user));
 }
 
@@ -187,11 +196,12 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
           emailRedirectTo: "https://devcarson88888.github.io/tools-box/"
         }
       });
-    request.then(({ error }) => {
+    request.then(({ data, error }) => {
       if (error) {
         if (feedback) feedback.textContent = error.message;
         return;
       }
+      if (type === "login" && data.session?.user) updateAccountUi(data.session.user);
       if (feedback) feedback.textContent = authSuccess[language][type];
       if (type === "login") window.setTimeout(() => { window.location.href = "https://devcarson88888.github.io/tools-box/"; }, 700);
     }).catch(() => {
