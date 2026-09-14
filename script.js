@@ -28,8 +28,10 @@ const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey);
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
+const accountAvatar = document.querySelector("#account-avatar");
 const logoutButton = document.querySelector("#logout-button");
 const logoutLabels = { en: "Log out", zh: "退出登录", es: "Cerrar sesión" };
+const welcomeLabels = { en: "Welcome", zh: "欢迎", es: "Bienvenido/a" };
 
 const translations = {
   en: {
@@ -59,6 +61,9 @@ function setLanguage(language) {
   const signupButton = document.querySelector(".button-small");
   if (signupButton) signupButton.firstChild.textContent = `${copy.signup} `;
   if (logoutButton) logoutButton.textContent = logoutLabels[language] || logoutLabels.en;
+  document.querySelectorAll("[data-i18n='welcomeUser']").forEach((element) => {
+    element.textContent = welcomeLabels[language] || welcomeLabels.en;
+  });
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     if (copy[element.dataset.i18n]) element.innerHTML = copy[element.dataset.i18n];
   });
@@ -98,6 +103,10 @@ function updateAccountUi(user) {
     element.hidden = signedIn;
   });
   if (signedIn && accountEmail) accountEmail.textContent = maskEmail(user.email);
+  if (signedIn && accountAvatar) {
+    const displayName = user.user_metadata?.name || user.email || "User";
+    accountAvatar.textContent = displayName.trim().charAt(0).toUpperCase();
+  }
 }
 
 if (supabaseClient && accountArea) {
