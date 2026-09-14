@@ -14,10 +14,18 @@ const tools = [
 ];
 
 const authFeedback = {
-  en: { login: "Demo mode: connect a backend to sign in securely.", signup: "Demo mode: your account form is ready to connect." },
-  zh: { login: "演示模式：连接后端后即可安全登录。", signup: "演示模式：注册表单已准备好接入后端。" },
-  es: { login: "Modo demo: conecta un backend para iniciar sesión de forma segura.", signup: "Modo demo: el formulario está listo para conectar." }
+  en: { login: "Unable to sign in. Please check your email and password.", signup: "Unable to create your account. Please try again." },
+  zh: { login: "登录失败，请检查邮箱和密码。", signup: "注册失败，请稍后重试。" },
+  es: { login: "No se pudo iniciar sesión. Comprueba tu correo y contraseña.", signup: "No se pudo crear la cuenta. Inténtalo de nuevo." }
 };
+const authSuccess = {
+  en: { login: "Signed in successfully. Redirecting…", signup: "Account created. Check your email to confirm your address." },
+  zh: { login: "登录成功，正在跳转……", signup: "账户已创建，请检查邮箱完成验证。" },
+  es: { login: "Sesión iniciada. Redirigiendo…", signup: "Cuenta creada. Revisa tu correo para confirmar la dirección." }
+};
+const supabaseUrl = "https://svjbtfhbwpavpvrjfbbe.supabase.co";
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2amJ0Zmhid3BhdnB2cmpmYmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODcwMDMsImV4cCI6MjEwNDk2MzAwM30.a7Iwkxj5sjVE_3YC1og-4_OAXi8Yhx5nkW6TVkIduNY";
+const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey);
 
 const translations = {
   en: {
@@ -94,7 +102,38 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
     const type = form.dataset.authForm;
     const feedback = form.querySelector(".form-feedback");
     const language = languageSelect?.value || "en";
-    if (feedback) feedback.textContent = authFeedback[language][type];
+    const email = form.querySelector('input[type="email"]')?.value.trim();
+    const password = form.querySelector('input[type="password"]')?.value;
+    const name = form.querySelector('input[name="name"]')?.value.trim();
+    const submitButton = form.querySelector(".auth-submit");
+    if (!supabaseClient) {
+      if (feedback) feedback.textContent = authFeedback[language][type];
+      return;
+    }
+    if (submitButton) submitButton.disabled = true;
+    if (feedback) feedback.textContent = "";
+    const request = type === "login"
+      ? supabaseClient.auth.signInWithPassword({ email, password })
+      : supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name },
+          emailRedirectTo: "https://devcarson88888.github.io/tools-box/"
+        }
+      });
+    request.then(({ error }) => {
+      if (error) {
+        if (feedback) feedback.textContent = error.message;
+        return;
+      }
+      if (feedback) feedback.textContent = authSuccess[language][type];
+      if (type === "login") window.setTimeout(() => { window.location.href = "https://devcarson88888.github.io/tools-box/"; }, 700);
+    }).catch(() => {
+      if (feedback) feedback.textContent = authFeedback[language][type];
+    }).finally(() => {
+      if (submitButton) submitButton.disabled = false;
+    });
   });
 });
 setLanguage(localStorage.getItem("tools-box-language") || "en");
