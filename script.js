@@ -37,12 +37,14 @@ const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
 const switchAccountLink = document.querySelector("#switch-account-link");
+const loginNavLink = document.querySelector("#login-nav-link");
+const signupNavLink = document.querySelector("#signup-nav-link");
 const forgotPasswordLink = document.querySelector("#forgot-password");
 const switchAccountLabels = { en: "Switch account", zh: "切换账号", es: "Cambiar cuenta" };
 const switchPageCopy = {
-  en: { accountSettings: "Account settings", switchTitle: "Switch<br /><em>your account.</em>", switchIntro: "You are currently signed in as:", switchButton: "Continue with another account", staySignedIn: "Stay signed in" },
-  zh: { accountSettings: "账户设置", switchTitle: "切换<br /><em>你的账号。</em>", switchIntro: "你当前登录的账号是：", switchButton: "使用其他账号", staySignedIn: "保持登录" },
-  es: { accountSettings: "Ajustes de cuenta", switchTitle: "Cambia<br /><em>tu cuenta.</em>", switchIntro: "Has iniciado sesión como:", switchButton: "Continuar con otra cuenta", staySignedIn: "Mantener sesión" }
+  en: { switchAccount: "Switch account", accountSettings: "Account settings", switchTitle: "Switch<br /><em>your account.</em>", switchIntro: "You are currently signed in as:", switchButton: "Continue with another account", staySignedIn: "Stay signed in" },
+  zh: { switchAccount: "切换账号", accountSettings: "账户设置", switchTitle: "切换<br /><em>你的账号。</em>", switchIntro: "你当前登录的账号是：", switchButton: "使用其他账号", staySignedIn: "保持登录" },
+  es: { switchAccount: "Cambiar cuenta", accountSettings: "Ajustes de cuenta", switchTitle: "Cambia<br /><em>tu cuenta.</em>", switchIntro: "Has iniciado sesión como:", switchButton: "Continuar con otra cuenta", staySignedIn: "Mantener sesión" }
 };
 const welcomeLabels = { en: "Welcome", zh: "欢迎", es: "Bienvenido/a" };
 const resetMessages = {
@@ -76,7 +78,7 @@ function setLanguage(language) {
     const element = document.querySelector(selector);
     if (element) element.textContent = value;
   });
-  const signupButton = document.querySelector(".button-small");
+  const signupButton = signupNavLink;
   if (signupButton) signupButton.firstChild.textContent = `${copy.signup} `;
   if (switchAccountLink) switchAccountLink.textContent = switchAccountLabels[language] || switchAccountLabels.en;
   document.querySelectorAll("[data-i18n='welcomeUser']").forEach((element) => {
@@ -118,9 +120,8 @@ function updateAccountUi(user) {
   if (!accountArea) return;
   const signedIn = Boolean(user?.email);
   accountArea.hidden = !signedIn;
-  document.querySelectorAll(".nav-actions > .login-link, .nav-actions > .button-small").forEach((element) => {
-    element.hidden = signedIn;
-  });
+  if (loginNavLink) loginNavLink.hidden = signedIn;
+  if (signupNavLink) signupNavLink.hidden = signedIn;
   if (signedIn && accountEmail) accountEmail.textContent = maskEmail(user.email);
   if (signedIn && accountAvatar) {
     const displayName = user.user_metadata?.name || user.email || "User";
