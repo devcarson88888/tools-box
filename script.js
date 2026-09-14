@@ -32,12 +32,18 @@ const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKe
     detectSessionInUrl: true
   }
 });
+window.supabaseClient = supabaseClient;
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
-const logoutButton = document.querySelector("#logout-button");
+const switchAccountLink = document.querySelector("#switch-account-link");
 const forgotPasswordLink = document.querySelector("#forgot-password");
-const logoutLabels = { en: "Log out", zh: "退出登录", es: "Cerrar sesión" };
+const switchAccountLabels = { en: "Switch account", zh: "切换账号", es: "Cambiar cuenta" };
+const switchPageCopy = {
+  en: { accountSettings: "Account settings", switchTitle: "Switch<br /><em>your account.</em>", switchIntro: "You are currently signed in as:", switchButton: "Continue with another account", staySignedIn: "Stay signed in" },
+  zh: { accountSettings: "账户设置", switchTitle: "切换<br /><em>你的账号。</em>", switchIntro: "你当前登录的账号是：", switchButton: "使用其他账号", staySignedIn: "保持登录" },
+  es: { accountSettings: "Ajustes de cuenta", switchTitle: "Cambia<br /><em>tu cuenta.</em>", switchIntro: "Has iniciado sesión como:", switchButton: "Continuar con otra cuenta", staySignedIn: "Mantener sesión" }
+};
 const welcomeLabels = { en: "Welcome", zh: "欢迎", es: "Bienvenido/a" };
 const resetMessages = {
   en: { email: "Enter the email address you used to sign up:", sent: "Password reset email sent. Check your inbox.", missing: "Please enter an email address." },
@@ -72,12 +78,13 @@ function setLanguage(language) {
   });
   const signupButton = document.querySelector(".button-small");
   if (signupButton) signupButton.firstChild.textContent = `${copy.signup} `;
-  if (logoutButton) logoutButton.textContent = logoutLabels[language] || logoutLabels.en;
+  if (switchAccountLink) switchAccountLink.textContent = switchAccountLabels[language] || switchAccountLabels.en;
   document.querySelectorAll("[data-i18n='welcomeUser']").forEach((element) => {
     element.textContent = welcomeLabels[language] || welcomeLabels.en;
   });
   document.querySelectorAll("[data-i18n]").forEach((element) => {
-    if (copy[element.dataset.i18n]) element.innerHTML = copy[element.dataset.i18n];
+    const value = copy[element.dataset.i18n] || switchPageCopy[language]?.[element.dataset.i18n];
+    if (value) element.innerHTML = value;
   });
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     element.placeholder = copy[element.dataset.i18nPlaceholder];
@@ -129,11 +136,17 @@ if (supabaseClient) {
   supabaseClient.auth.onAuthStateChange((_event, session) => updateAccountUi(session?.user));
 }
 
-logoutButton?.addEventListener("click", async () => {
+const switchConfirmButton = document.querySelector("#switch-confirm");
+switchConfirmButton?.addEventListener("click", async () => {
   if (!supabaseClient) return;
+  switchConfirmButton.disabled = true;
   const { error } = await supabaseClient.auth.signOut();
-  if (error) console.error("Unable to sign out", error);
-  updateAccountUi(null);
+  if (error) {
+    console.error("Unable to switch account", error);
+    switchConfirmButton.disabled = false;
+    return;
+  }
+  window.location.href = "login.html";
 });
 
 forgotPasswordLink?.addEventListener("click", async (event) => {
