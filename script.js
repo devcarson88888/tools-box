@@ -117,9 +117,8 @@ function maskEmail(email) {
 }
 
 function updateAccountUi(user) {
-  if (!accountArea) return;
   const signedIn = Boolean(user?.email);
-  accountArea.hidden = !signedIn;
+  if (accountArea) accountArea.hidden = !signedIn;
   if (loginNavLink) loginNavLink.hidden = signedIn;
   if (signupNavLink) signupNavLink.hidden = signedIn;
   if (signedIn && accountEmail) accountEmail.textContent = maskEmail(user.email);
@@ -127,12 +126,18 @@ function updateAccountUi(user) {
     const displayName = user.user_metadata?.name || user.email || "User";
     accountAvatar.textContent = displayName.trim().charAt(0).toUpperCase();
   }
+  if (!signedIn && accountEmail) accountEmail.textContent = "";
+  if (!signedIn && accountAvatar) accountAvatar.textContent = "U";
 }
 
+updateAccountUi(null);
 if (supabaseClient) {
   supabaseClient.auth.getSession().then(({ data, error }) => {
     if (error) console.error("Unable to restore session", error);
     updateAccountUi(data.session?.user);
+  }).catch((error) => {
+    console.error("Unable to restore session", error);
+    updateAccountUi(null);
   });
   supabaseClient.auth.onAuthStateChange((_event, session) => updateAccountUi(session?.user));
 }
