@@ -34,6 +34,10 @@
             </label>
             <a class="login-link" href="login.html">Log in</a>
             <a class="button button-dark button-small" href="signup.html">Sign up <span aria-hidden="true">↗</span></a>
+            <span class="account-area" id="account-area" hidden>
+              <span class="account-email" id="account-email"></span>
+              <button class="logout-button" id="logout-button" type="button" data-i18n="logout">Log out</button>
+            </span>
           </div>
         </div>
       </nav>
@@ -79,6 +83,7 @@
         <p>Small tools. Big help.</p><span>© 2026 tools.box</span>
       </footer>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="script.js"></script>
   </body>
 </html>

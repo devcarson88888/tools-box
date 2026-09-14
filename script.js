@@ -26,6 +26,10 @@ const authSuccess = {
 const supabaseUrl = "https://svjbtfhbwpavpvrjfbbe.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2amJ0Zmhid3BhdnB2cmpmYmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODcwMDMsImV4cCI6MjEwNDk2MzAwM30.a7Iwkxj5sjVE_3YC1og-4_OAXi8Yhx5nkW6TVkIduNY";
 const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey);
+const accountArea = document.querySelector("#account-area");
+const accountEmail = document.querySelector("#account-email");
+const logoutButton = document.querySelector("#logout-button");
+const logoutLabels = { en: "Log out", zh: "退出登录", es: "Cerrar sesión" };
 
 const translations = {
   en: {
@@ -52,7 +56,9 @@ function setLanguage(language) {
     const element = document.querySelector(selector);
     if (element) element.textContent = value;
   });
-  document.querySelector(".button-small").firstChild.textContent = `${copy.signup} `;
+  const signupButton = document.querySelector(".button-small");
+  if (signupButton) signupButton.firstChild.textContent = `${copy.signup} `;
+  if (logoutButton) logoutButton.textContent = logoutLabels[language] || logoutLabels.en;
   document.querySelectorAll("[data-i18n]").forEach((element) => {
     if (copy[element.dataset.i18n]) element.innerHTML = copy[element.dataset.i18n];
   });
@@ -77,6 +83,34 @@ function renderResults(query = "") {
   searchStatus.textContent = `${matches.length} ${copy.results}`;
   if (!matches.length) searchResults.innerHTML = `<p class="search-empty">${copy.noResults}</p>`;
 }
+
+function maskEmail(email) {
+  const [name, domain] = email.split("@");
+  if (!name || !domain) return "Account";
+  return `${name.slice(0, 1)}${"*".repeat(Math.min(Math.max(name.length - 1, 2), 4))}@${domain}`;
+}
+
+function updateAccountUi(user) {
+  if (!accountArea) return;
+  const signedIn = Boolean(user?.email);
+  accountArea.hidden = !signedIn;
+  document.querySelectorAll(".nav-actions > .login-link, .nav-actions > .button-small").forEach((element) => {
+    element.hidden = signedIn;
+  });
+  if (signedIn && accountEmail) accountEmail.textContent = maskEmail(user.email);
+}
+
+if (supabaseClient && accountArea) {
+  supabaseClient.auth.getSession().then(({ data }) => updateAccountUi(data.session?.user));
+  supabaseClient.auth.onAuthStateChange((_event, session) => updateAccountUi(session?.user));
+}
+
+logoutButton?.addEventListener("click", async () => {
+  if (!supabaseClient) return;
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) console.error("Unable to sign out", error);
+  updateAccountUi(null);
+});
 
 menuToggle?.addEventListener("click", () => {
   const isOpen = navLinks.classList.toggle("open");
