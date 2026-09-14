@@ -13,6 +13,12 @@ const tools = [
   { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach" }
 ];
 
+const authFeedback = {
+  en: { login: "Demo mode: connect a backend to sign in securely.", signup: "Demo mode: your account form is ready to connect." },
+  zh: { login: "演示模式：连接后端后即可安全登录。", signup: "演示模式：注册表单已准备好接入后端。" },
+  es: { login: "Modo demo: conecta un backend para iniciar sesión de forma segura.", signup: "Modo demo: el formulario está listo para conectar." }
+};
+
 const translations = {
   en: {
     home: "Home", allTools: "All tools", categories: "Categories", about: "About us", login: "Log in", signup: "Sign up",
@@ -47,6 +53,10 @@ function setLanguage(language) {
   });
   document.documentElement.lang = language;
   localStorage.setItem("tools-box-language", language);
+  document.querySelectorAll("[data-auth-form]").forEach((form) => {
+    const feedback = form.querySelector(".form-feedback");
+    if (feedback) feedback.textContent = "";
+  });
   if (searchResults) renderResults(searchInput?.value || "");
 }
 
@@ -78,5 +88,14 @@ searchForm?.addEventListener("submit", (event) => {
   renderResults(searchInput.value);
 });
 searchInput?.addEventListener("input", () => renderResults(searchInput.value));
+document.querySelectorAll("[data-auth-form]").forEach((form) => {
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const type = form.dataset.authForm;
+    const feedback = form.querySelector(".form-feedback");
+    const language = languageSelect?.value || "en";
+    if (feedback) feedback.textContent = authFeedback[language][type];
+  });
+});
 setLanguage(localStorage.getItem("tools-box-language") || "en");
 renderResults();

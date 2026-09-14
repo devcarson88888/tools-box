@@ -21,13 +21,14 @@
           <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="welcomeBack">Welcome back</span></div>
           <h1 id="login-title" data-i18n="loginTitle">Log in to<br /><em>your toolbox.</em></h1>
           <p class="auth-intro" data-i18n="loginIntro">Pick up where you left off and get back to the tools that help you do your best work.</p>
-          <form class="auth-form" action="#" method="post">
+          <form class="auth-form" data-auth-form="login" action="#" method="post">
             <label for="login-email" data-i18n="emailLabel">Email address</label>
             <input id="login-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
             <label for="login-password" data-i18n="passwordLabel">Password</label>
             <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter your password" required />
             <div class="auth-options"><label class="checkbox-label"><input type="checkbox" name="remember" /> <span data-i18n="remember">Remember me</span></label><a href="#forgot" data-i18n="forgot">Forgot password?</a></div>
             <button class="button button-dark auth-submit" type="submit" data-i18n="loginButton">Log in</button>
+            <p class="form-feedback" aria-live="polite"></p>
           </form>
           <p class="auth-switch"><span data-i18n="noAccount">Don't have an account?</span> <a href="signup.html" data-i18n="signup">Sign up</a></p>
         </section>

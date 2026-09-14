@@ -21,7 +21,7 @@
           <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="getStarted">Get started</span></div>
           <h1 id="signup-title" data-i18n="signupTitle">Make room for<br /><em>useful things.</em></h1>
           <p class="auth-intro" data-i18n="signupIntro">Create your free account and keep your favorite tools close at hand.</p>
-          <form class="auth-form" action="#" method="post">
+          <form class="auth-form" data-auth-form="signup" action="#" method="post">
             <label for="signup-name" data-i18n="nameLabel">Your name</label>
             <input id="signup-name" name="name" type="text" autocomplete="name" placeholder="What should we call you?" required />
             <label for="signup-email" data-i18n="emailLabel">Email address</label>
@@ -30,6 +30,7 @@
             <input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required />
             <label class="checkbox-label terms-label"><input type="checkbox" name="terms" required /> <span data-i18n="terms">I agree to the terms and privacy policy.</span></label>
             <button class="button button-dark auth-submit" type="submit" data-i18n="signupButton">Create account</button>
+            <p class="form-feedback" aria-live="polite"></p>
           </form>
           <p class="auth-switch"><span data-i18n="haveAccount">Already have an account?</span> <a href="login.html" data-i18n="login">Log in</a></p>
         </section>
