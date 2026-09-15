@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="The page you are looking for could not be found." />
+    <title>Page not found — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .error-main { align-items: center; display: grid; gap: 8vw; grid-template-columns: 1fr 1fr; min-height: 650px; padding: 70px 8%; }
+      .error-copy h1 { font-size: clamp(72px, 12vw, 150px); line-height: .8; margin: 24px 0; }
+      .error-copy h1 em { color: #a59ca9; font-style: normal; }
+      .error-copy p { color: var(--muted); font-size: 15px; line-height: 1.65; max-width: 360px; }
+      .error-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 28px; }
+      .error-art { align-items: center; background: var(--lime); border-radius: 50%; display: flex; height: min(360px, 35vw); justify-content: center; justify-self: center; position: relative; transform: rotate(-8deg); width: min(360px, 35vw); }
+      .error-art strong { font: 600 clamp(25px, 3vw, 40px)/.95 "Space Grotesk", sans-serif; letter-spacing: -2px; text-align: center; transform: rotate(8deg); }
+      .error-art span { color: #ed976d; font-size: 55px; position: absolute; right: 7%; top: 5%; }
+      @media (max-width: 700px) {
+        .error-main { grid-template-columns: 1fr; min-height: 600px; padding: 60px 10px; }
+        .error-art { height: 250px; width: 250px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/tools-box/" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <a class="auth-home-link" href="/tools-box/">Back to home</a>
+      </nav>
+      <main class="error-main">
+        <section class="error-copy" aria-labelledby="error-title">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Page not found</div>
+          <h1 id="error-title">Oops.<br /><em>404.</em></h1>
+          <p>That page wandered outside the toolbox. Let’s get you back to something useful.</p>
+          <div class="error-actions">
+            <a class="button button-dark" href="/tools-box/">Back home <span aria-hidden="true">↗</span></a>
+            <a class="button button-light" href="/tools-box/search.html">Search tools <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+        <div class="error-art" aria-hidden="true"><span>✳</span><strong>less noise.<br /><em>more doing.</em></strong></div>
+      </main>
+      <footer class="footer">
+        <a class="brand" href="/tools-box/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+  </body>
+</html>
