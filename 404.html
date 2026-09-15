@@ -12,7 +12,7 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="/styles.css" />
     <style>
       .error-main {
         align-items: center;
@@ -122,12 +122,10 @@
       </footer>
     </div>
     <script>
-      const isGitHubPages = window.location.hostname.endsWith("github.io");
-      const siteBase = isGitHubPages ? "/tools-box/" : "/";
       document.querySelectorAll("[data-home-link]").forEach((link) => {
-        link.href = siteBase;
+        link.href = "/";
       });
-      document.querySelector("[data-search-link]").href = `${siteBase}search/`;
+      document.querySelector("[data-search-link]").href = "/search/";
     </script>
   </body>
 </html>

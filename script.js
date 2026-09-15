@@ -113,7 +113,7 @@ function renderResults(query = "") {
   const normalizedQuery = query.trim().toLowerCase();
   const matches = tools.filter((tool) => `${tool.name} ${tool.category} ${tool.description}`.toLowerCase().includes(normalizedQuery));
   const copy = translations[localStorage.getItem("tools-box-language") || "en"] || translations.en;
-  searchResults.innerHTML = matches.map((tool) => `<a class="search-result ${tool.className}" href="#tool-${tool.name.toLowerCase().split(" ")[0]}"><span class="tool-icon">${tool.icon}</span><span><h3>${tool.name}</h3><p>${tool.category} · ${tool.description}</p></span></a>`).join("");
+  searchResults.innerHTML = matches.map((tool) => `<a class="search-result ${tool.className}" href="${siteHomeUrl}#tool-${tool.name.toLowerCase().split(" ")[0]}"><span class="tool-icon">${tool.icon}</span><span><h3>${tool.name}</h3><p>${tool.category} · ${tool.description}</p></span></a>`).join("");
   searchStatus.textContent = `${matches.length} ${copy.results}`;
   if (!matches.length) searchResults.innerHTML = `<p class="search-empty">${copy.noResults}</p>`;
 }
