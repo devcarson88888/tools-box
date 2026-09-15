@@ -33,6 +33,8 @@ const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKe
   }
 });
 window.supabaseClient = supabaseClient;
+const siteHomeUrl = new URL("index.html", window.location.href).href;
+const loginUrl = new URL("login.html", window.location.href).href;
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
@@ -166,7 +168,7 @@ forgotPasswordLink?.addEventListener("click", async (event) => {
   }
   if (!supabaseClient) return;
   const { error } = await supabaseClient.auth.resetPasswordForEmail(email.trim(), {
-    redirectTo: "https://devcarson88888.github.io/tools-box/login.html"
+    redirectTo: loginUrl
   });
   if (feedback) feedback.textContent = error ? error.message : resetMessages[language].sent;
 });
@@ -212,7 +214,7 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
         password,
         options: {
           data: { name },
-          emailRedirectTo: "https://devcarson88888.github.io/tools-box/"
+          emailRedirectTo: siteHomeUrl
         }
       });
     request.then(({ data, error }) => {
@@ -222,7 +224,7 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
       }
       if (type === "login" && data.session?.user) updateAccountUi(data.session.user);
       if (feedback) feedback.textContent = authSuccess[language][type];
-      if (type === "login") window.setTimeout(() => { window.location.href = "https://devcarson88888.github.io/tools-box/"; }, 700);
+      if (type === "login") window.setTimeout(() => { window.location.href = siteHomeUrl; }, 700);
     }).catch(() => {
       if (feedback) feedback.textContent = authFeedback[language][type];
     }).finally(() => {

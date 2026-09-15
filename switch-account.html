@@ -38,7 +38,7 @@
         window.supabaseClient.auth.getUser().then(({ data }) => {
           const user = data.user;
           if (!user?.email) {
-            window.location.href = "login.html";
+            window.location.href = new URL("login.html", window.location.href).href;
             return;
           }
           switchEmail.textContent = window.maskEmail ? window.maskEmail(user.email) : user.email;
