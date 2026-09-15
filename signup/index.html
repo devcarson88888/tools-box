@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Create an account with Useful Tools Box." />
+    <title>Sign up — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="page-shell auth-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/tools-box/#top" aria-label="Useful Tools Box home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <a class="auth-home-link" href="/tools-box/">← <span data-i18n="backHome">Back to home</span></a>
+      </nav>
+      <main class="auth-main">
+        <section class="auth-card" aria-labelledby="signup-title">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="getStarted">Get started</span></div>
+          <h1 id="signup-title" data-i18n="signupTitle">Make room for<br /><em>useful things.</em></h1>
+          <p class="auth-intro" data-i18n="signupIntro">Create your free account and keep your favorite tools close at hand.</p>
+          <form class="auth-form" data-auth-form="signup" action="#" method="post">
+            <label for="signup-name" data-i18n="nameLabel">Your name</label>
+            <input id="signup-name" name="name" type="text" autocomplete="name" placeholder="What should we call you?" required />
+            <label for="signup-email" data-i18n="emailLabel">Email address</label>
+            <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
+            <label for="signup-password" data-i18n="passwordLabel">Password</label>
+            <input id="signup-password" name="password" type="password" autocomplete="new-password" placeholder="At least 8 characters" minlength="8" required />
+            <label class="checkbox-label terms-label"><input type="checkbox" name="terms" required /> <span data-i18n="terms">I agree to the terms and privacy policy.</span></label>
+            <button class="button button-dark auth-submit" type="submit" data-i18n="signupButton">Create account</button>
+            <p class="form-feedback" aria-live="polite"></p>
+          </form>
+          <p class="auth-switch"><span data-i18n="haveAccount">Already have an account?</span> <a href="/tools-box/login/" data-i18n="login">Log in</a></p>
+        </section>
+        <aside class="auth-art auth-art-peach" aria-hidden="true"><span class="auth-star">✦</span><strong>make space<br /><em>for ideas.</em></strong><span class="auth-orbit"></span></aside>
+      </main>
+      <footer class="footer"><span>© 2026 tools.box</span><span data-i18n="privateNote">Simple tools, made with care.</span></footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../script.js?v=20260914-auth"></script>
+  </body>
+</html>

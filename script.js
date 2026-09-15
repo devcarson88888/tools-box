@@ -35,8 +35,8 @@ const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKe
   }
 });
 window.supabaseClient = supabaseClient;
-const siteHomeUrl = new URL("./", window.location.href).href;
-const loginUrl = new URL("login.html", siteHomeUrl).href;
+const siteHomeUrl = new URL("/tools-box/", window.location.origin).href;
+const loginUrl = new URL("login/", siteHomeUrl).href;
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
@@ -161,7 +161,7 @@ switchConfirmButton?.addEventListener("click", async () => {
     switchConfirmButton.disabled = false;
     return;
   }
-  window.location.href = "login.html";
+  window.location.href = loginUrl;
 });
 
 cancelSignOutButton?.addEventListener("click", async () => {

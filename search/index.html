@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Search the Useful Tools Box for the right tool." />
+    <title>Search tools — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/tools-box/#top" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span><span class="sr-only">Toggle navigation</span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a class="nav-link" href="/tools-box/#top">Home</a>
+          <a class="nav-link active" href="/tools-box/search/">Search</a>
+          <a class="nav-link" href="/tools-box/#categories">Categories</a>
+          <a class="nav-link" href="/tools-box/#about">About us</a>
+          <div class="nav-actions">
+            <div class="language-picker">
+              <button class="language-toggle" id="language-toggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span id="language-current">EN</span><span aria-hidden="true">⌄</span>
+              </button>
+              <div class="language-menu" id="language-menu" role="listbox" aria-label="Select language" hidden>
+                <button type="button" role="option" data-language="en">English <span>EN</span></button>
+                <button type="button" role="option" data-language="zh">中文 <span>中文</span></button>
+                <button type="button" role="option" data-language="es">Español <span>ES</span></button>
+              </div>
+            </div>
+            <a class="login-link" id="login-nav-link" href="/tools-box/login/">Log in</a>
+            <a class="button button-dark button-small" id="signup-nav-link" href="/tools-box/signup/">Sign up <span aria-hidden="true">↗</span></a>
+            <span class="account-area" id="account-area" hidden>
+              <span class="account-avatar" id="account-avatar" aria-hidden="true">U</span>
+              <span class="account-welcome"><span data-i18n="welcomeUser">Welcome</span> <strong id="account-email"></strong></span>
+              <a class="logout-button" id="switch-account-link" href="/tools-box/switch-account/" data-i18n="switchAccount">Switch account</a>
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      <main class="search-page">
+        <a class="back-link" href="/tools-box/">← <span data-i18n="backHome">Back to home</span></a>
+        <section class="search-section" id="search" aria-labelledby="search-title">
+          <div class="search-heading">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="searchEyebrow">Search the box</span></div>
+              <h1 id="search-title"><span data-i18n="searchTitle">What can we help<br /><em>you find?</em></span></h1>
+            </div>
+            <p data-i18n="searchDescription">Search by tool name, category, or what you need to get done.</p>
+          </div>
+          <form class="search-form" id="tool-search-form" role="search">
+            <span class="search-icon" aria-hidden="true">⌕</span>
+            <input id="tool-search" type="search" autocomplete="off" data-i18n-placeholder="searchPlaceholder" placeholder="Try “color”, “JSON”, or “time zone”" />
+            <button class="button button-dark button-small" type="submit"><span data-i18n="searchButton">Search</span> <span aria-hidden="true">↗</span></button>
+          </form>
+          <p class="search-status" id="search-status" aria-live="polite"></p>
+          <div class="search-results" id="search-results"></div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <a class="brand" href="/tools-box/#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <p>Small tools. Big help.</p>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../script.js?v=20260914-auth"></script>
+  </body>
+</html>
