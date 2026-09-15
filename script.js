@@ -33,8 +33,8 @@ const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKe
   }
 });
 window.supabaseClient = supabaseClient;
-const siteHomeUrl = new URL("index.html", window.location.href).href;
-const loginUrl = new URL("login.html", window.location.href).href;
+const siteHomeUrl = new URL("./", window.location.href).href;
+const loginUrl = new URL("login.html", siteHomeUrl).href;
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
 const accountAvatar = document.querySelector("#account-avatar");
