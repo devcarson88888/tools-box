@@ -35,7 +35,7 @@ const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKe
   }
 });
 window.supabaseClient = supabaseClient;
-const siteHomeUrl = new URL("/tools-box/", window.location.origin).href;
+const siteHomeUrl = new URL("/", window.location.origin).href;
 const loginUrl = new URL("login/", siteHomeUrl).href;
 const accountArea = document.querySelector("#account-area");
 const accountEmail = document.querySelector("#account-email");
