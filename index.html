@@ -37,14 +37,16 @@
           <a class="nav-link" href="#categories">Categories</a>
           <a class="nav-link" href="#about">About us</a>
           <div class="nav-actions">
-            <label class="language-picker">
-              <span class="sr-only">Language</span>
-              <select id="language-select" aria-label="Select language">
-                <option value="en">EN</option>
-                <option value="zh">中文</option>
-                <option value="es">ES</option>
-              </select>
-            </label>
+            <div class="language-picker">
+              <button class="language-toggle" id="language-toggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span id="language-current">EN</span><span aria-hidden="true">⌄</span>
+              </button>
+              <div class="language-menu" id="language-menu" role="listbox" aria-label="Select language" hidden>
+                <button type="button" role="option" data-language="en">English <span>EN</span></button>
+                <button type="button" role="option" data-language="zh">中文 <span>中文</span></button>
+                <button type="button" role="option" data-language="es">Español <span>ES</span></button>
+              </div>
+            </div>
             <a class="login-link" id="login-nav-link" href="login.html">Log in</a>
             <a class="button button-dark button-small" id="signup-nav-link" href="signup.html">Sign up <span aria-hidden="true">↗</span></a>
             <span class="account-area" id="account-area" hidden>

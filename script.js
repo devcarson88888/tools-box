@@ -1,6 +1,8 @@
 const menuToggle = document.querySelector(".menu-toggle");
 const navLinks = document.querySelector(".nav-links");
-const languageSelect = document.querySelector("#language-select");
+const languageToggle = document.querySelector("#language-toggle");
+const languageCurrent = document.querySelector("#language-current");
+const languageMenu = document.querySelector("#language-menu");
 const searchForm = document.querySelector("#tool-search-form");
 const searchInput = document.querySelector("#tool-search");
 const searchResults = document.querySelector("#search-results");
@@ -93,6 +95,10 @@ function setLanguage(language) {
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     element.placeholder = copy[element.dataset.i18nPlaceholder];
   });
+  if (languageCurrent) languageCurrent.textContent = language === "zh" ? "中文" : language === "es" ? "ES" : "EN";
+  document.querySelectorAll("[data-language]").forEach((option) => {
+    option.setAttribute("aria-selected", String(option.dataset.language === language));
+  });
   document.documentElement.lang = language;
   localStorage.setItem("tools-box-language", language);
   document.querySelectorAll("[data-auth-form]").forEach((form) => {
@@ -106,7 +112,7 @@ function renderResults(query = "") {
   if (!searchResults || !searchStatus) return;
   const normalizedQuery = query.trim().toLowerCase();
   const matches = tools.filter((tool) => `${tool.name} ${tool.category} ${tool.description}`.toLowerCase().includes(normalizedQuery));
-  const copy = translations[languageSelect?.value || "en"] || translations.en;
+  const copy = translations[localStorage.getItem("tools-box-language") || "en"] || translations.en;
   searchResults.innerHTML = matches.map((tool) => `<a class="search-result ${tool.className}" href="#tool-${tool.name.toLowerCase().split(" ")[0]}"><span class="tool-icon">${tool.icon}</span><span><h3>${tool.name}</h3><p>${tool.category} · ${tool.description}</p></span></a>`).join("");
   searchStatus.textContent = `${matches.length} ${copy.results}`;
   if (!matches.length) searchResults.innerHTML = `<p class="search-empty">${copy.noResults}</p>`;
@@ -172,7 +178,7 @@ cancelSignOutButton?.addEventListener("click", async () => {
 
 forgotPasswordLink?.addEventListener("click", async (event) => {
   event.preventDefault();
-  const language = languageSelect?.value || "en";
+  const language = localStorage.getItem("tools-box-language") || "en";
   const email = window.prompt(resetMessages[language].email);
   const feedback = document.querySelector("[data-auth-form='login'] .form-feedback");
   if (!email?.trim()) {
@@ -198,7 +204,26 @@ document.querySelectorAll(".nav-link, .nav-actions a").forEach((link) => {
   });
 });
 
-languageSelect?.addEventListener("change", (event) => setLanguage(event.target.value));
+function closeLanguageMenu() {
+  if (!languageMenu || !languageToggle) return;
+  languageMenu.hidden = true;
+  languageToggle.setAttribute("aria-expanded", "false");
+}
+
+languageToggle?.addEventListener("click", () => {
+  const isOpen = !languageMenu.hidden;
+  languageMenu.hidden = isOpen;
+  languageToggle.setAttribute("aria-expanded", String(!isOpen));
+});
+document.querySelectorAll("[data-language]").forEach((option) => {
+  option.addEventListener("click", () => {
+    setLanguage(option.dataset.language);
+    closeLanguageMenu();
+  });
+});
+document.addEventListener("click", (event) => {
+  if (languageMenu && languageToggle && !languageMenu.contains(event.target) && !languageToggle.contains(event.target)) closeLanguageMenu();
+});
 searchForm?.addEventListener("submit", (event) => {
   event.preventDefault();
   renderResults(searchInput.value);
@@ -209,7 +234,7 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
     event.preventDefault();
     const type = form.dataset.authForm;
     const feedback = form.querySelector(".form-feedback");
-    const language = languageSelect?.value || "en";
+    const language = localStorage.getItem("tools-box-language") || "en";
     const email = form.querySelector('input[type="email"]')?.value.trim();
     const password = form.querySelector('input[type="password"]')?.value;
     const name = form.querySelector('input[name="name"]')?.value.trim();
