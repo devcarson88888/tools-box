@@ -44,9 +44,9 @@ const signupNavLink = document.querySelector("#signup-nav-link");
 const forgotPasswordLink = document.querySelector("#forgot-password");
 const switchAccountLabels = { en: "Switch account", zh: "切换账号", es: "Cambiar cuenta" };
 const switchPageCopy = {
-  en: { switchAccount: "Switch account", accountSettings: "Account settings", switchTitle: "Switch<br /><em>your account.</em>", switchIntro: "You are currently signed in as:", switchButton: "Continue with another account", staySignedIn: "Stay signed in" },
-  zh: { switchAccount: "切换账号", accountSettings: "账户设置", switchTitle: "切换<br /><em>你的账号。</em>", switchIntro: "你当前登录的账号是：", switchButton: "使用其他账号", staySignedIn: "保持登录" },
-  es: { switchAccount: "Cambiar cuenta", accountSettings: "Ajustes de cuenta", switchTitle: "Cambia<br /><em>tu cuenta.</em>", switchIntro: "Has iniciado sesión como:", switchButton: "Continuar con otra cuenta", staySignedIn: "Mantener sesión" }
+  en: { switchAccount: "Switch account", accountSettings: "Account settings", switchTitle: "Switch<br /><em>your account.</em>", switchIntro: "You are currently signed in as:", switchButton: "Continue with another account", signOutButton: "Cancel sign in", staySignedIn: "Stay signed in" },
+  zh: { switchAccount: "切换账号", accountSettings: "账户设置", switchTitle: "切换<br /><em>你的账号。</em>", switchIntro: "你当前登录的账号是：", switchButton: "使用其他账号", signOutButton: "取消登录", staySignedIn: "保持登录" },
+  es: { switchAccount: "Cambiar cuenta", accountSettings: "Ajustes de cuenta", switchTitle: "Cambia<br /><em>tu cuenta.</em>", switchIntro: "Has iniciado sesión como:", switchButton: "Continuar con otra cuenta", signOutButton: "Cancelar sesión", staySignedIn: "Mantener sesión" }
 };
 const welcomeLabels = { en: "Welcome", zh: "欢迎", es: "Bienvenido/a" };
 const resetMessages = {
@@ -145,6 +145,7 @@ if (supabaseClient) {
 }
 
 const switchConfirmButton = document.querySelector("#switch-confirm");
+const cancelSignOutButton = document.querySelector("#cancel-signout");
 switchConfirmButton?.addEventListener("click", async () => {
   if (!supabaseClient) return;
   switchConfirmButton.disabled = true;
@@ -155,6 +156,18 @@ switchConfirmButton?.addEventListener("click", async () => {
     return;
   }
   window.location.href = "login.html";
+});
+
+cancelSignOutButton?.addEventListener("click", async () => {
+  if (!supabaseClient) return;
+  cancelSignOutButton.disabled = true;
+  const { error } = await supabaseClient.auth.signOut();
+  if (error) {
+    console.error("Unable to cancel sign in", error);
+    cancelSignOutButton.disabled = false;
+    return;
+  }
+  window.location.href = siteHomeUrl;
 });
 
 forgotPasswordLink?.addEventListener("click", async (event) => {
