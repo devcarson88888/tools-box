@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Convert time zones quickly with Useful Tools Box." />
+    <title>Time zone converter — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../styles.css" />
+    <style>
+      .tool-page { min-height: 650px; padding: 58px 3.1vw 100px; }
+      .tool-page-card { background: #fff; border-radius: 16px; display: grid; gap: 50px; grid-template-columns: 1fr .8fr; margin-top: 22px; padding: clamp(28px, 5vw, 70px); }
+      .tool-page h1 { font-size: clamp(46px, 6vw, 80px); line-height: .94; margin: 18px 0; }
+      .tool-page h1 em { color: #a59ca9; font-style: normal; }
+      .tool-intro { color: var(--muted); font-size: 15px; line-height: 1.7; max-width: 410px; }
+      .converter-form { display: grid; gap: 14px; margin-top: 30px; max-width: 430px; }
+      .converter-form label { color: var(--ink); font-size: 11px; font-weight: 700; }
+      .converter-form select, .converter-form input { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: 14px "DM Sans", sans-serif; padding: 13px; width: 100%; }
+      .converter-form input:focus, .converter-form select:focus { border-color: #c5d944; outline: 2px solid rgba(197, 217, 68, .2); }
+      .converter-result { background: var(--lilac); border-radius: 14px; min-height: 280px; padding: 28px; }
+      .converter-result h2 { font-size: 30px; line-height: 1; margin: 18px 0 12px; }
+      .converter-result p { color: #6e686c; font-size: 13px; line-height: 1.5; }
+      .result-time { color: var(--ink); font: 600 clamp(28px, 4vw, 48px) / 1 "Space Grotesk", sans-serif; letter-spacing: -2px; margin: 45px 0 8px; }
+      @media (max-width: 700px) {
+        .tool-page-card { grid-template-columns: 1fr; }
+        .converter-result { min-height: 220px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <a class="auth-home-link" href="/search/">← Back to tools</a>
+      </nav>
+      <main class="tool-page">
+        <a class="back-link" href="/">← Back to home</a>
+        <section class="tool-page-card" aria-labelledby="tool-title">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Productivity tool</div>
+            <h1 id="tool-title">Time zone<br /><em>converter.</em></h1>
+            <p class="tool-intro">See what time it is somewhere else at a glance. Choose a date, time, and two time zones to convert between them.</p>
+            <form class="converter-form" id="converter-form">
+              <div>
+                <label for="source-zone">From</label>
+                <select id="source-zone"></select>
+              </div>
+              <div>
+                <label for="target-zone">To</label>
+                <select id="target-zone"></select>
+              </div>
+              <div>
+                <label for="source-time">Date and time</label>
+                <input id="source-time" type="datetime-local" required />
+              </div>
+              <button class="button button-dark" type="submit">Convert <span aria-hidden="true">↗</span></button>
+            </form>
+          </div>
+          <aside class="converter-result" aria-live="polite">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Your result</div>
+            <h2 id="result-zone">Choose two zones</h2>
+            <p id="result-date">The converted time will appear here.</p>
+            <div class="result-time" id="result-time">—</div>
+            <p id="result-offset"></p>
+          </aside>
+        </section>
+      </main>
+      <footer class="footer">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script>
+      const zones = [
+        ["UTC", "UTC"],
+        ["New York", "America/New_York"],
+        ["London", "Europe/London"],
+        ["Paris", "Europe/Paris"],
+        ["Singapore", "Asia/Singapore"],
+        ["Hong Kong", "Asia/Hong_Kong"],
+        ["Tokyo", "Asia/Tokyo"],
+        ["Sydney", "Australia/Sydney"]
+      ];
+      const sourceZone = document.querySelector("#source-zone");
+      const targetZone = document.querySelector("#target-zone");
+      const sourceTime = document.querySelector("#source-time");
+      const resultZone = document.querySelector("#result-zone");
+      const resultDate = document.querySelector("#result-date");
+      const resultTime = document.querySelector("#result-time");
+      const resultOffset = document.querySelector("#result-offset");
+      const pad = (value) => String(value).padStart(2, "0");
+      const formatInputDate = (date) => `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+      const formatZoneName = (zone) => zones.find((item) => item[1] === zone)?.[0] || zone;
+      const getParts = (date, timeZone) => Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).formatToParts(date).filter((part) => part.type !== "literal").map((part) => [part.type, part.value]));
+      const getOffsetMinutes = (date, timeZone) => {
+        const parts = getParts(date, timeZone);
+        const asUtc = Date.UTC(Number(parts.year), Number(parts.month) - 1, Number(parts.day), Number(parts.hour) % 24, Number(parts.minute));
+        return Math.round((asUtc - date.getTime()) / 60000);
+      };
+      const parseWallTime = (value, timeZone) => {
+        const [datePart, timePart] = value.split("T");
+        const [year, month, day] = datePart.split("-").map(Number);
+        const [hour, minute] = timePart.split(":").map(Number);
+        const guess = new Date(Date.UTC(year, month - 1, day, hour, minute));
+        return new Date(guess.getTime() - getOffsetMinutes(guess, timeZone) * 60000);
+      };
+      zones.forEach(([label, value]) => {
+        sourceZone.add(new Option(label, value));
+        targetZone.add(new Option(label, value));
+      });
+      sourceZone.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (!zones.some((zone) => zone[1] === sourceZone.value)) sourceZone.value = "Asia/Hong_Kong";
+      targetZone.value = "America/New_York";
+      sourceTime.value = formatInputDate(new Date());
+      document.querySelector("#converter-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        const instant = parseWallTime(sourceTime.value, sourceZone.value);
+        const targetParts = getParts(instant, targetZone.value);
+        const targetDate = new Intl.DateTimeFormat("en-US", { timeZone: targetZone.value, weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(instant);
+        const offset = getOffsetMinutes(instant, targetZone.value);
+        const sign = offset >= 0 ? "+" : "-";
+        const hours = Math.floor(Math.abs(offset) / 60);
+        const minutes = Math.abs(offset) % 60;
+        resultZone.textContent = formatZoneName(targetZone.value);
+        resultDate.textContent = `${targetDate} · ${formatZoneName(sourceZone.value)} time converted`;
+        resultTime.textContent = `${targetParts.hour}:${targetParts.minute}`;
+        resultOffset.textContent = `UTC${sign}${hours}${minutes ? `:${pad(minutes)}` : ""}`;
+      });
+    </script>
+  </body>
+</html>

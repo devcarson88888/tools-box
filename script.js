@@ -9,7 +9,7 @@ const searchResults = document.querySelector("#search-results");
 const searchStatus = document.querySelector("#search-status");
 
 const tools = [
-  { name: "Time zone converter", category: "Productivity", description: "Never miss a beat, wherever you are.", icon: "◷", className: "card-lilac" },
+  { name: "Time zone converter", category: "Productivity", description: "Never miss a beat, wherever you are.", icon: "◷", className: "card-lilac", path: "/tools/Time-zone-converter/" },
   { name: "Color palette", category: "Creative", description: "Find colors that play well together.", icon: "◉", className: "card-cream" },
   { name: "Text formatter", category: "Everyday", description: "Make every word count beautifully.", icon: "Aa", className: "card-sage" },
   { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach" }
@@ -113,7 +113,7 @@ function renderResults(query = "") {
   const normalizedQuery = query.trim().toLowerCase();
   const matches = tools.filter((tool) => `${tool.name} ${tool.category} ${tool.description}`.toLowerCase().includes(normalizedQuery));
   const copy = translations[localStorage.getItem("tools-box-language") || "en"] || translations.en;
-  searchResults.innerHTML = matches.map((tool) => `<a class="search-result ${tool.className}" href="${siteHomeUrl}#tool-${tool.name.toLowerCase().split(" ")[0]}"><span class="tool-icon">${tool.icon}</span><span><h3>${tool.name}</h3><p>${tool.category} · ${tool.description}</p></span></a>`).join("");
+  searchResults.innerHTML = matches.map((tool) => `<a class="search-result ${tool.className}" href="${tool.path || `${siteHomeUrl}#tool-${tool.name.toLowerCase().split(" ")[0]}`}"><span class="tool-icon">${tool.icon}</span><span><h3>${tool.name}</h3><p>${tool.category} · ${tool.description}</p></span></a>`).join("");
   searchStatus.textContent = `${matches.length} ${copy.results}`;
   if (!matches.length) searchResults.innerHTML = `<p class="search-empty">${copy.noResults}</p>`;
 }
