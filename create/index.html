@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Create a small HTML, CSS, and JavaScript project in Useful Tools Box." />
+    <title>Create a tool — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <style>
+      .create-page { padding: 45px 0 90px; }
+      .create-header { align-items: end; display: flex; justify-content: space-between; padding: 0 3.1vw; }
+      .create-header h1 { font-size: clamp(44px, 5vw, 70px); line-height: .94; margin: 18px 0 0; }
+      .create-header h1 em { color: #a59ca9; font-style: normal; }
+      .create-intro { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 0; max-width: 300px; }
+      .create-workspace { background: #fff; border-radius: 15px; display: grid; gap: 18px; grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr); margin: 30px 3.1vw 0; padding: 20px; }
+      .editor-panel, .preview-panel { min-width: 0; }
+      .editor-toolbar { align-items: center; display: flex; gap: 8px; justify-content: space-between; margin-bottom: 10px; }
+      .project-name { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; color: var(--ink); font: 600 12px "DM Sans", sans-serif; max-width: 180px; padding: 9px 10px; width: 100%; }
+      .editor-tabs { display: flex; gap: 5px; }
+      .editor-tab { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; color: var(--muted); cursor: pointer; font: 700 11px "DM Sans", sans-serif; padding: 9px 12px; }
+      .editor-tab.active { background: var(--ink); border-color: var(--ink); color: #fff; }
+      .code-editor { background: #242126; border: 0; border-radius: 10px; color: #f8f7f4; display: block; font: 13px/1.6 Consolas, "Courier New", monospace; min-height: 430px; padding: 18px; resize: vertical; tab-size: 2; width: 100%; }
+      .code-editor:focus { box-shadow: 0 0 0 3px rgba(217, 244, 91, .45); outline: 0; }
+      .preview-frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; display: block; height: 430px; width: 100%; }
+      .preview-label { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 1px; margin: 0 0 10px; text-transform: uppercase; }
+      .create-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; margin: 18px 3.1vw 0; }
+      .create-note { color: var(--muted); font-size: 11px; margin: 0; }
+      .create-status { color: #6d7f32; font-size: 11px; margin: 0; min-height: 16px; }
+      @media (max-width: 850px) {
+        .create-header { align-items: flex-start; flex-direction: column; gap: 18px; }
+        .create-workspace { grid-template-columns: 1fr; }
+      }
+      @media (max-width: 480px) {
+        .create-workspace { margin-left: 10px; margin-right: 10px; padding: 12px; }
+        .create-header, .create-actions { margin-left: 10px; margin-right: 10px; }
+        .editor-toolbar { align-items: stretch; flex-direction: column; }
+        .project-name { max-width: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <a class="auth-home-link" href="/search/">← Back to search</a>
+      </nav>
+      <main class="create-page">
+        <header class="create-header">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Build your own</div>
+            <h1>Create a<br /><em>small tool.</em></h1>
+          </div>
+          <p class="create-intro">Write HTML, CSS, and JavaScript, see the result instantly, then download your project as a ZIP file.</p>
+        </header>
+        <section class="create-workspace" aria-label="Code editor and preview">
+          <div class="editor-panel">
+            <div class="editor-toolbar">
+              <input class="project-name" id="project-name" value="my-tool" aria-label="Project name" />
+              <div class="editor-tabs" role="tablist" aria-label="Code files">
+                <button class="editor-tab active" type="button" data-file="html" role="tab">HTML</button>
+                <button class="editor-tab" type="button" data-file="css" role="tab">CSS</button>
+                <button class="editor-tab" type="button" data-file="js" role="tab">JS</button>
+              </div>
+            </div>
+            <textarea class="code-editor" id="code-editor" spellcheck="false" aria-label="Code editor"></textarea>
+          </div>
+          <div class="preview-panel">
+            <p class="preview-label">Live preview</p>
+            <iframe class="preview-frame" id="preview-frame" title="Live project preview" sandbox="allow-scripts"></iframe>
+          </div>
+        </section>
+        <div class="create-actions">
+          <div>
+            <p class="create-note">Your code stays in this browser. Nothing is uploaded to GitHub.</p>
+            <p class="create-status" id="create-status" aria-live="polite"></p>
+          </div>
+          <button class="button button-dark" id="download-project" type="button">Download ZIP <span aria-hidden="true">↓</span></button>
+        </div>
+      </main>
+      <footer class="footer">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script>
+      const files = {
+        html: "<main class=\"card\">\\n  <h1>Hello, tools.box!</h1>\\n  <p>Build something useful.</p>\\n  <button id=\"hello\">Say hello</button>\\n</main>",
+        css: "body {\\n  background: #f8f7f4;\\n  color: #242126;\\n  font-family: sans-serif;\\n  margin: 0;\\n  padding: 3rem;\\n}\\n.card {\\n  background: white;\\n  border-radius: 1rem;\\n  max-width: 28rem;\\n  padding: 2rem;\\n}",
+        js: "document.querySelector('#hello').addEventListener('click', () => {\\n  alert('Hello from your tool!');\\n});"
+      };
+      const editor = document.querySelector("#code-editor");
+      const frame = document.querySelector("#preview-frame");
+      const status = document.querySelector("#create-status");
+      let activeFile = "html";
+      const updatePreview = () => {
+        files[activeFile] = editor.value;
+        const safeScript = files.js.replace(/<\\/script/gi, "<\\\\/script");
+        frame.srcdoc = `<!doctype html><html><head><style>${files.css}</style></head><body>${files.html}<script>${safeScript}<\\/script></body></html>`;
+        localStorage.setItem("tools-box-project", JSON.stringify(files));
+      };
+      const selectFile = (file) => {
+        files[activeFile] = editor.value;
+        activeFile = file;
+        editor.value = files[file];
+        document.querySelectorAll(".editor-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.file === file));
+        editor.setAttribute("aria-label", `${file.toUpperCase()} code editor`);
+      };
+      const savedFiles = localStorage.getItem("tools-box-project");
+      if (savedFiles) {
+        try { Object.assign(files, JSON.parse(savedFiles)); } catch (error) { console.warn("Unable to restore saved project", error); }
+      }
+      editor.value = files.html;
+      editor.addEventListener("input", updatePreview);
+      document.querySelectorAll(".editor-tab").forEach((tab) => tab.addEventListener("click", () => selectFile(tab.dataset.file)));
+      document.querySelector("#download-project").addEventListener("click", async () => {
+        files[activeFile] = editor.value;
+        if (!window.JSZip) {
+          status.textContent = "ZIP download is unavailable. Please try again when the page is online.";
+          return;
+        }
+        const zip = new JSZip();
+        const projectSlug = (document.querySelector("#project-name").value.trim() || "my-tool").replace(/[^a-z0-9-_]/gi, "-");
+        const folder = zip.folder(projectSlug);
+        folder.file("index.html", files.html);
+        folder.file("styles.css", files.css);
+        folder.file("script.js", files.js);
+        const blob = await zip.generateAsync({ type: "blob" });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = `${projectSlug}.zip`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        status.textContent = "ZIP downloaded.";
+      });
+      updatePreview();
+    </script>
+  </body>
+</html>
