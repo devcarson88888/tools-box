@@ -26,6 +26,9 @@
       .file-button:hover, .file-button.active { background: #fff; color: var(--ink); box-shadow: 0 3px 10px rgba(36, 33, 38, .06); }
       .file-icon { align-items: center; background: var(--line); border-radius: 4px; color: var(--ink); display: inline-flex; font: 700 9px "Space Grotesk", sans-serif; height: 25px; justify-content: center; width: 25px; }
       .file-button.active .file-icon { background: var(--lime); }
+      .new-file-actions { display: grid; gap: 6px; margin-top: 14px; }
+      .new-file-button { background: #fff; border: 1px dashed var(--line); border-radius: 7px; color: var(--muted); cursor: pointer; font: 600 10px "DM Sans", sans-serif; padding: 8px; text-align: left; }
+      .new-file-button:hover { border-color: var(--ink); color: var(--ink); }
       .editor-area, .preview-area { min-width: 0; padding: 24px; }
       .editor-area { border-right: 1px solid var(--line); }
       .panel-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 12px; }
@@ -87,12 +90,13 @@
         <section class="builder-workspace" aria-label="Temporary project workspace">
           <aside class="staging-area">
             <p class="workspace-label">Staging area</p>
-            <ul class="file-list" role="list">
-              <li><button class="file-button active" type="button" data-file="html"><span class="file-icon">HTML</span><span class="file-name">index.html</span></button></li>
-              <li><button class="file-button" type="button" data-file="css"><span class="file-icon">CSS</span><span class="file-name">styles.css</span></button></li>
-              <li><button class="file-button" type="button" data-file="js"><span class="file-icon">JS</span><span class="file-name">script.js</span></button></li>
-            </ul>
-            <p class="staging-hint">These three files are kept together temporarily. Start runs the HTML with its CSS and JavaScript.</p>
+            <ul class="file-list" id="file-list" role="list"></ul>
+            <div class="new-file-actions" aria-label="Create a file">
+              <button class="new-file-button" type="button" data-new-file="html">＋ index.html</button>
+              <button class="new-file-button" type="button" data-new-file="css">＋ styles.css</button>
+              <button class="new-file-button" type="button" data-new-file="js">＋ script.js</button>
+            </div>
+            <p class="staging-hint">The staging area starts empty. Add files here, then Start runs only the files currently staged.</p>
           </aside>
 
           <section class="editor-area" aria-label="Code editor">
@@ -100,7 +104,7 @@
               <p class="workspace-label">Editor</p>
               <span class="current-file" id="current-file">index.html</span>
             </div>
-            <textarea class="code-editor" id="code-editor" spellcheck="false" aria-label="HTML code editor"></textarea>
+            <textarea class="code-editor" id="code-editor" spellcheck="false" aria-label="Code editor" placeholder="Add a file to the staging area to start writing." disabled></textarea>
           </section>
 
           <section class="preview-area" aria-label="Run preview">
@@ -129,32 +133,44 @@
       </footer>
     </div>
     <script>
-      const files = {
-        html: "<main class=\"card\">\\n  <h1>Hello, tools.box!</h1>\\n  <p>Build something useful.</p>\\n  <button id=\"hello\">Say hello</button>\\n</main>",
-        css: "body {\\n  background: #f8f7f4;\\n  color: #242126;\\n  font-family: sans-serif;\\n  margin: 0;\\n  padding: 3rem;\\n}\\n.card {\\n  background: white;\\n  border-radius: 1rem;\\n  max-width: 28rem;\\n  padding: 2rem;\\n}",
-        js: "document.querySelector('#hello').addEventListener('click', () => {\\n  alert('Hello from your tool!');\\n});"
-      };
+      const files = {};
       const fileNames = { html: "index.html", css: "styles.css", js: "script.js" };
+      const fileLabels = { html: "HTML", css: "CSS", js: "JS" };
+      const storageKey = "tools-box-staging-area-v2";
+      const fileList = document.querySelector("#file-list");
       const editor = document.querySelector("#code-editor");
       const frame = document.querySelector("#preview-frame");
       const status = document.querySelector("#builder-status");
       const currentFile = document.querySelector("#current-file");
-      let activeFile = "html";
+      let activeFile = null;
       let statusTimer;
 
       const saveStagingArea = () => {
-        files[activeFile] = editor.value;
-        localStorage.setItem("tools-box-staging-area", JSON.stringify(files));
+        if (activeFile) files[activeFile] = editor.value;
+        localStorage.setItem(storageKey, JSON.stringify(files));
+      };
+      const renderFileList = () => {
+        fileList.innerHTML = Object.keys(fileNames).filter((file) => files[file] !== undefined).map((file) => `<li><button class="file-button${file === activeFile ? " active" : ""}" type="button" data-file="${file}"><span class="file-icon">${fileLabels[file]}</span><span class="file-name">${fileNames[file]}</span></button></li>`).join("");
+        fileList.querySelectorAll(".file-button").forEach((button) => button.addEventListener("click", () => selectFile(button.dataset.file)));
       };
       const buildTemporaryProject = () => {
         saveStagingArea();
+        if (files.html === undefined) return "";
         const safeHtml = files.html.replace(/<script/gi, "<scr" + "ipt");
-        const safeScript = files.js.replace(/<\/script/gi, "<\\\\/script");
-        return `<!doctype html><html><head><meta charset="UTF-8"><style>${files.css}</style></head><body>${safeHtml}<script>${safeScript}<\\/script></body></html>`;
+        const css = files.css === undefined ? "" : `<style>${files.css}</style>`;
+        const safeScript = files.js === undefined ? "" : `<script>${files.js.replace(/<\/script/gi, "<\\\\/script")}<\\/script>`;
+        return `<!doctype html><html><head><meta charset="UTF-8">${css}</head><body>${safeHtml}${safeScript}</body></html>`;
       };
       const runProject = () => {
-        frame.srcdoc = buildTemporaryProject();
-        status.textContent = "Started: index.html + styles.css + script.js";
+        const project = buildTemporaryProject();
+        if (!project) {
+          frame.srcdoc = "";
+          status.textContent = "Add index.html before starting the project.";
+          return;
+        }
+        frame.srcdoc = project;
+        const stagedNames = Object.keys(files).filter((file) => files[file] !== undefined).map((file) => fileNames[file]).join(" + ");
+        status.textContent = `Started: ${stagedNames}`;
         window.clearTimeout(statusTimer);
         statusTimer = window.setTimeout(() => { status.textContent = ""; }, 3000);
       };
@@ -163,16 +179,21 @@
         activeFile = file;
         editor.value = files[file];
         currentFile.textContent = fileNames[file];
+        editor.disabled = false;
         editor.setAttribute("aria-label", `${fileNames[file]} code editor`);
-        document.querySelectorAll(".file-button").forEach((button) => button.classList.toggle("active", button.dataset.file === file));
+        renderFileList();
       };
-      const savedFiles = localStorage.getItem("tools-box-staging-area");
+      const addFile = (file, content = "") => {
+        if (files[file] === undefined) files[file] = content;
+        selectFile(file);
+        saveStagingArea();
+      };
+      const savedFiles = localStorage.getItem(storageKey);
       if (savedFiles) {
         try { Object.assign(files, JSON.parse(savedFiles)); } catch (error) { console.warn("Unable to restore staging area", error); }
       }
-      editor.value = files.html;
       editor.addEventListener("input", saveStagingArea);
-      document.querySelectorAll(".file-button").forEach((button) => button.addEventListener("click", () => selectFile(button.dataset.file)));
+      document.querySelectorAll("[data-new-file]").forEach((button) => button.addEventListener("click", () => addFile(button.dataset.newFile)));
       document.querySelector("#start-project").addEventListener("click", runProject);
       document.querySelector("#upload-button").addEventListener("click", () => document.querySelector("#upload-project").click());
       document.querySelector("#upload-project").addEventListener("change", async (event) => {
@@ -182,7 +203,10 @@
           if (extension === "css") files.css = await file.text();
           if (extension === "js") files.js = await file.text();
         }
-        selectFile("html");
+        renderFileList();
+        const firstFile = ["html", "css", "js"].find((file) => files[file] !== undefined);
+        if (firstFile) selectFile(firstFile);
+        saveStagingArea();
         status.textContent = "Files added to the staging area.";
         event.target.value = "";
       });
@@ -193,9 +217,13 @@
           return;
         }
         const zip = new JSZip();
-        zip.file("index.html", files.html);
-        zip.file("styles.css", files.css);
-        zip.file("script.js", files.js);
+        Object.keys(files).forEach((file) => {
+          if (files[file] !== undefined) zip.file(fileNames[file], files[file]);
+        });
+        if (!Object.keys(files).length) {
+          status.textContent = "Add at least one file before downloading.";
+          return;
+        }
         const blob = await zip.generateAsync({ type: "blob" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
@@ -204,7 +232,10 @@
         window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
         status.textContent = "Temporary project downloaded.";
       });
-      runProject();
+      renderFileList();
+      if (Object.keys(files).length) {
+        selectFile(Object.keys(fileNames).find((file) => files[file] !== undefined));
+      }
     </script>
   </body>
 </html>
