@@ -81,7 +81,10 @@
             <p class="create-note">Your code stays in this browser. Nothing is uploaded to GitHub.</p>
             <p class="create-status" id="create-status" aria-live="polite"></p>
           </div>
-          <button class="button button-dark" id="download-project" type="button">Download ZIP <span aria-hidden="true">↓</span></button>
+          <div class="create-buttons">
+            <button class="button button-light" id="run-project" type="button">Run <span aria-hidden="true">▶</span></button>
+            <button class="button button-dark" id="download-project" type="button">Download ZIP <span aria-hidden="true">↓</span></button>
+          </div>
         </div>
       </main>
       <footer class="footer">
@@ -99,11 +102,15 @@
       const frame = document.querySelector("#preview-frame");
       const status = document.querySelector("#create-status");
       let activeFile = "html";
-      const updatePreview = () => {
+      const updatePreview = (showStatus = false) => {
         files[activeFile] = editor.value;
         const safeScript = files.js.replace(/<\\/script/gi, "<\\\\/script");
         frame.srcdoc = `<!doctype html><html><head><style>${files.css}</style></head><body>${files.html}<script>${safeScript}<\\/script></body></html>`;
         localStorage.setItem("tools-box-project", JSON.stringify(files));
+        if (showStatus) {
+          status.textContent = "Running your project in the preview.";
+          window.setTimeout(() => { status.textContent = ""; }, 2500);
+        }
       };
       const selectFile = (file) => {
         files[activeFile] = editor.value;
@@ -117,8 +124,9 @@
         try { Object.assign(files, JSON.parse(savedFiles)); } catch (error) { console.warn("Unable to restore saved project", error); }
       }
       editor.value = files.html;
-      editor.addEventListener("input", updatePreview);
+      editor.addEventListener("input", () => updatePreview());
       document.querySelectorAll(".editor-tab").forEach((tab) => tab.addEventListener("click", () => selectFile(tab.dataset.file)));
+      document.querySelector("#run-project").addEventListener("click", () => updatePreview(true));
       document.querySelector("#download-project").addEventListener("click", async () => {
         files[activeFile] = editor.value;
         if (!window.JSZip) {
