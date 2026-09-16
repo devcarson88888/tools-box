@@ -3,42 +3,63 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Create a small HTML, CSS, and JavaScript project in Useful Tools Box." />
-    <title>Create a tool — Useful Tools Box</title>
+    <meta name="description" content="Create and preview a small HTML, CSS, and JavaScript project." />
+    <title>Build a tool — Useful Tools Box</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../styles.css" />
     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
     <style>
-      .create-page { padding: 45px 0 90px; }
-      .create-header { align-items: end; display: flex; justify-content: space-between; padding: 0 3.1vw; }
-      .create-header h1 { font-size: clamp(44px, 5vw, 70px); line-height: .94; margin: 18px 0 0; }
-      .create-header h1 em { color: #a59ca9; font-style: normal; }
-      .create-intro { color: var(--muted); font-size: 13px; line-height: 1.55; margin: 0; max-width: 300px; }
-      .create-workspace { background: #fff; border-radius: 15px; display: grid; gap: 18px; grid-template-columns: minmax(300px, 1fr) minmax(300px, 1fr); margin: 30px 3.1vw 0; padding: 20px; }
-      .editor-panel, .preview-panel { min-width: 0; }
-      .editor-toolbar { align-items: center; display: flex; gap: 8px; justify-content: space-between; margin-bottom: 10px; }
-      .project-name { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; color: var(--ink); font: 600 12px "DM Sans", sans-serif; max-width: 180px; padding: 9px 10px; width: 100%; }
-      .editor-tabs { display: flex; gap: 5px; }
-      .editor-tab { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; color: var(--muted); cursor: pointer; font: 700 11px "DM Sans", sans-serif; padding: 9px 12px; }
-      .editor-tab.active { background: var(--ink); border-color: var(--ink); color: #fff; }
-      .code-editor { background: #242126; border: 0; border-radius: 10px; color: #f8f7f4; display: block; font: 13px/1.6 Consolas, "Courier New", monospace; min-height: 430px; padding: 18px; resize: vertical; tab-size: 2; width: 100%; }
+      .builder-page { padding: 34px 0 70px; }
+      .builder-top { align-items: center; display: flex; justify-content: space-between; padding: 0 3.1vw 25px; }
+      .builder-top h1 { font-size: clamp(34px, 4vw, 58px); line-height: .95; margin: 14px 0 0; }
+      .builder-top h1 em { color: #a59ca9; font-style: normal; }
+      .builder-actions { align-items: center; display: flex; gap: 12px; }
+      .builder-actions .button { padding: 13px 18px; }
+      .builder-workspace { background: #fff; border: 1px solid var(--line); border-radius: 15px; display: grid; grid-template-columns: 185px minmax(300px, 1fr) minmax(300px, 1fr); min-height: 610px; overflow: hidden; }
+      .staging-area { background: var(--paper); border-right: 1px solid var(--line); padding: 24px 14px; }
+      .workspace-label { color: #9b9599; font-size: 10px; font-weight: 700; letter-spacing: 1.5px; margin: 0 8px 16px; text-transform: uppercase; }
+      .staging-hint { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 24px 8px 0; }
+      .file-list { display: grid; gap: 6px; list-style: none; margin: 0; padding: 0; }
+      .file-button { align-items: center; background: transparent; border: 0; border-radius: 8px; color: var(--muted); cursor: pointer; display: flex; font: 600 12px "DM Sans", sans-serif; gap: 9px; padding: 11px 9px; text-align: left; width: 100%; }
+      .file-button:hover, .file-button.active { background: #fff; color: var(--ink); box-shadow: 0 3px 10px rgba(36, 33, 38, .06); }
+      .file-icon { align-items: center; background: var(--line); border-radius: 4px; color: var(--ink); display: inline-flex; font: 700 9px "Space Grotesk", sans-serif; height: 25px; justify-content: center; width: 25px; }
+      .file-button.active .file-icon { background: var(--lime); }
+      .editor-area, .preview-area { min-width: 0; padding: 24px; }
+      .editor-area { border-right: 1px solid var(--line); }
+      .panel-heading { align-items: center; display: flex; justify-content: space-between; margin-bottom: 12px; }
+      .panel-heading .workspace-label { margin: 0; }
+      .current-file { color: var(--muted); font: 500 11px Consolas, monospace; }
+      .code-editor { background: #242126; border: 0; border-radius: 10px; color: #f8f7f4; display: block; font: 13px/1.65 Consolas, "Courier New", monospace; height: 510px; padding: 18px; resize: none; tab-size: 2; width: 100%; }
       .code-editor:focus { box-shadow: 0 0 0 3px rgba(217, 244, 91, .45); outline: 0; }
-      .preview-frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; display: block; height: 430px; width: 100%; }
-      .preview-label { color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: 1px; margin: 0 0 10px; text-transform: uppercase; }
-      .create-actions { align-items: center; display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; margin: 18px 3.1vw 0; }
-      .create-note { color: var(--muted); font-size: 11px; margin: 0; }
-      .create-status { color: #6d7f32; font-size: 11px; margin: 0; min-height: 16px; }
-      @media (max-width: 850px) {
-        .create-header { align-items: flex-start; flex-direction: column; gap: 18px; }
-        .create-workspace { grid-template-columns: 1fr; }
+      .preview-frame { background: #fff; border: 1px solid var(--line); border-radius: 10px; display: block; height: 510px; width: 100%; }
+      .preview-note { color: var(--muted); font-size: 10px; line-height: 1.4; margin: 12px 0 0; }
+      .builder-bottom { align-items: center; display: flex; justify-content: space-between; padding: 20px 3.1vw 0; }
+      .builder-status { color: #6d7f32; font-size: 11px; margin: 0; min-height: 16px; }
+      .bottom-actions { display: flex; gap: 12px; }
+      .hidden-input { display: none; }
+      @media (max-width: 980px) {
+        .builder-workspace { grid-template-columns: 150px minmax(280px, 1fr); }
+        .preview-area { border-top: 1px solid var(--line); grid-column: 1 / -1; }
+        .preview-frame { height: 360px; }
       }
-      @media (max-width: 480px) {
-        .create-workspace { margin-left: 10px; margin-right: 10px; padding: 12px; }
-        .create-header, .create-actions { margin-left: 10px; margin-right: 10px; }
-        .editor-toolbar { align-items: stretch; flex-direction: column; }
-        .project-name { max-width: none; }
+      @media (max-width: 700px) {
+        .builder-top { align-items: flex-start; flex-direction: column; gap: 20px; }
+        .builder-workspace { grid-template-columns: 1fr; }
+        .staging-area { border-bottom: 1px solid var(--line); border-right: 0; }
+        .file-list { grid-template-columns: repeat(3, 1fr); }
+        .staging-hint { display: none; }
+        .editor-area { border-right: 0; }
+        .editor-area, .preview-area { padding: 16px; }
+        .code-editor { height: 360px; }
+        .builder-bottom { align-items: flex-start; flex-direction: column; gap: 16px; }
+      }
+      @media (max-width: 430px) {
+        .file-button { justify-content: center; padding: 8px 4px; }
+        .file-name { display: none; }
+        .builder-actions, .bottom-actions { width: 100%; }
+        .builder-actions .button, .bottom-actions .button { flex: 1; }
       }
     </style>
   </head>
@@ -51,42 +72,57 @@
         </a>
         <a class="auth-home-link" href="/search/">← Back to search</a>
       </nav>
-      <main class="create-page">
-        <header class="create-header">
+
+      <main class="builder-page">
+        <header class="builder-top">
           <div>
-            <div class="eyebrow"><span class="eyebrow-dot"></span> Build your own</div>
-            <h1>Create a<br /><em>small tool.</em></h1>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Temporary project space</div>
+            <h1>Build it.<br /><em>Run it.</em></h1>
           </div>
-          <p class="create-intro">Write HTML, CSS, and JavaScript, see the result instantly, then download your project as a ZIP file.</p>
+          <div class="builder-actions">
+            <button class="button button-dark" id="start-project" type="button">Start <span aria-hidden="true">▶</span></button>
+          </div>
         </header>
-        <section class="create-workspace" aria-label="Code editor and preview">
-          <div class="editor-panel">
-            <div class="editor-toolbar">
-              <input class="project-name" id="project-name" value="my-tool" aria-label="Project name" />
-              <div class="editor-tabs" role="tablist" aria-label="Code files">
-                <button class="editor-tab active" type="button" data-file="html" role="tab">HTML</button>
-                <button class="editor-tab" type="button" data-file="css" role="tab">CSS</button>
-                <button class="editor-tab" type="button" data-file="js" role="tab">JS</button>
-              </div>
+
+        <section class="builder-workspace" aria-label="Temporary project workspace">
+          <aside class="staging-area">
+            <p class="workspace-label">Staging area</p>
+            <ul class="file-list" role="list">
+              <li><button class="file-button active" type="button" data-file="html"><span class="file-icon">HTML</span><span class="file-name">index.html</span></button></li>
+              <li><button class="file-button" type="button" data-file="css"><span class="file-icon">CSS</span><span class="file-name">styles.css</span></button></li>
+              <li><button class="file-button" type="button" data-file="js"><span class="file-icon">JS</span><span class="file-name">script.js</span></button></li>
+            </ul>
+            <p class="staging-hint">These three files are kept together temporarily. Start runs the HTML with its CSS and JavaScript.</p>
+          </aside>
+
+          <section class="editor-area" aria-label="Code editor">
+            <div class="panel-heading">
+              <p class="workspace-label">Editor</p>
+              <span class="current-file" id="current-file">index.html</span>
             </div>
-            <textarea class="code-editor" id="code-editor" spellcheck="false" aria-label="Code editor"></textarea>
-          </div>
-          <div class="preview-panel">
-            <p class="preview-label">Live preview</p>
-            <iframe class="preview-frame" id="preview-frame" title="Live project preview" sandbox="allow-scripts"></iframe>
-          </div>
+            <textarea class="code-editor" id="code-editor" spellcheck="false" aria-label="HTML code editor"></textarea>
+          </section>
+
+          <section class="preview-area" aria-label="Run preview">
+            <div class="panel-heading">
+              <p class="workspace-label">Preview</p>
+              <span class="current-file">sandbox</span>
+            </div>
+            <iframe class="preview-frame" id="preview-frame" title="Project run preview" sandbox="allow-scripts"></iframe>
+            <p class="preview-note">The preview runs in an isolated browser sandbox. It cannot change this website.</p>
+          </section>
         </section>
-        <div class="create-actions">
-          <div>
-            <p class="create-note">Your code stays in this browser. Nothing is uploaded to GitHub.</p>
-            <p class="create-status" id="create-status" aria-live="polite"></p>
+
+        <footer class="builder-bottom">
+          <p class="builder-status" id="builder-status" aria-live="polite"></p>
+          <div class="bottom-actions">
+            <input class="hidden-input" id="upload-project" type="file" accept=".html,.css,.js" multiple />
+            <button class="button button-light" id="upload-button" type="button">Upload <span aria-hidden="true">↑</span></button>
+            <button class="button button-dark" id="download-project" type="button">Download <span aria-hidden="true">↓</span></button>
           </div>
-          <div class="create-buttons">
-            <button class="button button-light" id="run-project" type="button">Run <span aria-hidden="true">▶</span></button>
-            <button class="button button-dark" id="download-project" type="button">Download ZIP <span aria-hidden="true">↓</span></button>
-          </div>
-        </div>
+        </footer>
       </main>
+
       <footer class="footer">
         <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
         <span>© 2026 tools.box</span>
@@ -98,56 +134,77 @@
         css: "body {\\n  background: #f8f7f4;\\n  color: #242126;\\n  font-family: sans-serif;\\n  margin: 0;\\n  padding: 3rem;\\n}\\n.card {\\n  background: white;\\n  border-radius: 1rem;\\n  max-width: 28rem;\\n  padding: 2rem;\\n}",
         js: "document.querySelector('#hello').addEventListener('click', () => {\\n  alert('Hello from your tool!');\\n});"
       };
+      const fileNames = { html: "index.html", css: "styles.css", js: "script.js" };
       const editor = document.querySelector("#code-editor");
       const frame = document.querySelector("#preview-frame");
-      const status = document.querySelector("#create-status");
+      const status = document.querySelector("#builder-status");
+      const currentFile = document.querySelector("#current-file");
       let activeFile = "html";
-      const updatePreview = (showStatus = false) => {
+      let statusTimer;
+
+      const saveStagingArea = () => {
         files[activeFile] = editor.value;
-        const safeScript = files.js.replace(/<\\/script/gi, "<\\\\/script");
-        frame.srcdoc = `<!doctype html><html><head><style>${files.css}</style></head><body>${files.html}<script>${safeScript}<\\/script></body></html>`;
-        localStorage.setItem("tools-box-project", JSON.stringify(files));
-        if (showStatus) {
-          status.textContent = "Running your project in the preview.";
-          window.setTimeout(() => { status.textContent = ""; }, 2500);
-        }
+        localStorage.setItem("tools-box-staging-area", JSON.stringify(files));
+      };
+      const buildTemporaryProject = () => {
+        saveStagingArea();
+        const safeHtml = files.html.replace(/<script/gi, "<scr" + "ipt");
+        const safeScript = files.js.replace(/<\/script/gi, "<\\\\/script");
+        return `<!doctype html><html><head><meta charset="UTF-8"><style>${files.css}</style></head><body>${safeHtml}<script>${safeScript}<\\/script></body></html>`;
+      };
+      const runProject = () => {
+        frame.srcdoc = buildTemporaryProject();
+        status.textContent = "Started: index.html + styles.css + script.js";
+        window.clearTimeout(statusTimer);
+        statusTimer = window.setTimeout(() => { status.textContent = ""; }, 3000);
       };
       const selectFile = (file) => {
-        files[activeFile] = editor.value;
+        saveStagingArea();
         activeFile = file;
         editor.value = files[file];
-        document.querySelectorAll(".editor-tab").forEach((tab) => tab.classList.toggle("active", tab.dataset.file === file));
-        editor.setAttribute("aria-label", `${file.toUpperCase()} code editor`);
+        currentFile.textContent = fileNames[file];
+        editor.setAttribute("aria-label", `${fileNames[file]} code editor`);
+        document.querySelectorAll(".file-button").forEach((button) => button.classList.toggle("active", button.dataset.file === file));
       };
-      const savedFiles = localStorage.getItem("tools-box-project");
+      const savedFiles = localStorage.getItem("tools-box-staging-area");
       if (savedFiles) {
-        try { Object.assign(files, JSON.parse(savedFiles)); } catch (error) { console.warn("Unable to restore saved project", error); }
+        try { Object.assign(files, JSON.parse(savedFiles)); } catch (error) { console.warn("Unable to restore staging area", error); }
       }
       editor.value = files.html;
-      editor.addEventListener("input", () => updatePreview());
-      document.querySelectorAll(".editor-tab").forEach((tab) => tab.addEventListener("click", () => selectFile(tab.dataset.file)));
-      document.querySelector("#run-project").addEventListener("click", () => updatePreview(true));
+      editor.addEventListener("input", saveStagingArea);
+      document.querySelectorAll(".file-button").forEach((button) => button.addEventListener("click", () => selectFile(button.dataset.file)));
+      document.querySelector("#start-project").addEventListener("click", runProject);
+      document.querySelector("#upload-button").addEventListener("click", () => document.querySelector("#upload-project").click());
+      document.querySelector("#upload-project").addEventListener("change", async (event) => {
+        for (const file of event.target.files) {
+          const extension = file.name.split(".").pop().toLowerCase();
+          if (extension === "html") files.html = await file.text();
+          if (extension === "css") files.css = await file.text();
+          if (extension === "js") files.js = await file.text();
+        }
+        selectFile("html");
+        status.textContent = "Files added to the staging area.";
+        event.target.value = "";
+      });
       document.querySelector("#download-project").addEventListener("click", async () => {
-        files[activeFile] = editor.value;
+        saveStagingArea();
         if (!window.JSZip) {
-          status.textContent = "ZIP download is unavailable. Please try again when the page is online.";
+          status.textContent = "Download is unavailable while ZIP support is loading.";
           return;
         }
         const zip = new JSZip();
-        const projectSlug = (document.querySelector("#project-name").value.trim() || "my-tool").replace(/[^a-z0-9-_]/gi, "-");
-        const folder = zip.folder(projectSlug);
-        folder.file("index.html", files.html);
-        folder.file("styles.css", files.css);
-        folder.file("script.js", files.js);
+        zip.file("index.html", files.html);
+        zip.file("styles.css", files.css);
+        zip.file("script.js", files.js);
         const blob = await zip.generateAsync({ type: "blob" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = `${projectSlug}.zip`;
+        link.download = "my-tool.zip";
         link.click();
-        URL.revokeObjectURL(link.href);
-        status.textContent = "ZIP downloaded.";
+        window.setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+        status.textContent = "Temporary project downloaded.";
       });
-      updatePreview();
+      runProject();
     </script>
   </body>
 </html>
