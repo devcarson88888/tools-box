@@ -35,4 +35,18 @@ Adult-content moderation checks submitted HTML, CSS, JavaScript, and tool descri
 
 ## Signup email verification codes
 
-The signup page supports six-digit signup verification codes. In Supabase Authentication > Email Templates, edit the **Confirm signup** template to include `{{ .Token }}` and tell users to enter the code in the signup form; do not use `{{ .ConfirmationURL }}` as the only confirmation method. Configure a custom SMTP provider under Authentication > SMTP Settings for delivery to public email addresses. Supabase's default mailer may only send to project team addresses and has strict rate limits. After changing the template, deploy the updated static site and test signup, verification, and resend with a controlled test address.
+The signup page supports six-digit signup verification codes. Custom SMTP is not required to test this flow: Supabase's default mailer can send to authorized project team addresses, but has strict rate limits and is not intended for public delivery.
+
+1. In the Supabase Dashboard, open **Authentication > Email Templates > Confirm signup**.
+2. Set the email body to include `{{ .Token }}` (rather than relying only on `{{ .ConfirmationURL }}`). For example:
+
+   ```html
+   <h2>Verify your email</h2>
+   <p>Your Useful Tools Box verification code is:</p>
+   <p style="font-size: 24px; font-weight: bold; letter-spacing: 4px;">{{ .Token }}</p>
+   <p>Enter this code on the signup page. If you did not request it, you can ignore this email.</p>
+   ```
+
+3. Save the template, then test signup, code verification, and resend using an email address authorized by your Supabase project.
+
+For delivery to public email addresses, configure a custom SMTP provider under **Authentication > SMTP Settings**. This requires credentials from an email service and a sender address/domain that the service allows; do not enter placeholder credentials. Changing the Supabase email template does not require redeploying the static site.

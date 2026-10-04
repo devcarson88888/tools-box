@@ -292,7 +292,7 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
       });
     request.then(({ data, error }) => {
       if (error) {
-        setFeedback(friendlyAuthError(error, language));
+        setFeedback(friendlyAuthError(error, language, type));
         return;
       }
       if (type === "login" && data.session?.user) updateAccountUi(data.session.user);
@@ -320,7 +320,7 @@ const resendSignupButton = document.querySelector("#resend-signup-code");
 let signupVerificationEmail = "";
 let signupResendAvailableAt = 0;
 
-function friendlyAuthError(error, language) {
+function friendlyAuthError(error, language, type = "signup") {
   const detail = String(error?.message || "");
   if (/email address not authorized/i.test(detail)) {
     return {
@@ -329,7 +329,7 @@ function friendlyAuthError(error, language) {
       es: "El correo predeterminado de Supabase solo envía a direcciones autorizadas del equipo. Configura SMTP propio para enviar códigos a otros usuarios."
     }[language] || "Supabase's default email service only sends to authorized team addresses. Configure custom SMTP.";
   }
-  return detail || authFeedback[language]?.signup || authFeedback.en.signup;
+  return detail || authFeedback[language]?.[type] || authFeedback.en[type];
 }
 
 function beginSignupVerification(email) {
