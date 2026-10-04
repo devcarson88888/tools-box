@@ -89,15 +89,15 @@ const translations = {
 
 Object.assign(translations.en, {
   birthDateLabel: "Date of birth",
-  adultOnlyNotice: "You must be 18 or older to create an account. Your birth date is checked and not retained."
+  adultOnlyNotice: "You must be 18 or older to create an account. Your birth date is stored privately and visible only to authorized admins."
 });
 Object.assign(translations.zh, {
   birthDateLabel: "出生日期",
-  adultOnlyNotice: "必须年满 18 岁才能注册。系统会验证出生日期，但不会保存该日期。"
+  adultOnlyNotice: "必须年满 18 岁才能注册。生日会保存在私有记录中，仅授权管理员可见。"
 });
 Object.assign(translations.es, {
   birthDateLabel: "Fecha de nacimiento",
-  adultOnlyNotice: "Debes tener 18 años o más para registrarte. La fecha se verifica y no se conserva."
+  adultOnlyNotice: "Debes tener 18 años o más para registrarte. La fecha se guarda de forma privada y solo la ven administradores autorizados."
 });
 
 function setLanguage(language) {

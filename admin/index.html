@@ -22,7 +22,7 @@
       .admin-note { background: #fff5dd; border: 1px solid #efdfb8; border-radius: 9px; margin: 0 0 18px; padding: 13px 16px; }
       .admin-status { min-height: 23px; margin: 0 0 12px; }
       .admin-table-wrap { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
-      .admin-table { border-collapse: collapse; min-width: 780px; width: 100%; }
+      .admin-table { border-collapse: collapse; min-width: 900px; width: 100%; }
       .admin-table th,.admin-table td { border-bottom: 1px solid var(--line); padding: 14px 15px; text-align: left; vertical-align: middle; }
       .admin-table th { color: var(--muted); font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
       .admin-table td { font-size: 12px; }
@@ -35,6 +35,7 @@
       .admin-action { background: transparent; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); cursor: pointer; font: 700 11px "DM Sans",sans-serif; padding: 8px 10px; white-space: nowrap; }
       .admin-action:hover { border-color: #cf8b7a; }
       .admin-action:disabled,.admin-tools button:disabled { cursor: wait; opacity: .55; }
+      .admin-row-actions { display: flex; flex-wrap: wrap; gap: 7px; }
       .admin-pagination { align-items: center; display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
       .admin-pagination button { background: #fff; border: 1px solid var(--line); border-radius: 7px; cursor: pointer; padding: 9px 12px; }
       .admin-pagination button:disabled { cursor: default; opacity: .45; }
@@ -57,19 +58,19 @@
           <div>
             <div class="eyebrow"><span class="eyebrow-dot"></span> Private account console / 管理员控制台</div>
             <h1>Account <em>admin.</em></h1>
-            <p class="admin-subtitle">查看账号、确认邮箱状态、暂停或恢复登录。<br />Search accounts, check email status, suspend or restore sign-in.</p>
+            <p class="admin-subtitle">查看账号、生日、邮箱状态；暂停、恢复或删除账号。<br />View account details and birth dates; suspend, restore, or delete accounts.</p>
           </div>
           <div class="admin-tools admin-hidden" id="admin-tools">
             <input class="admin-search" id="admin-search" type="search" placeholder="搜索邮箱或用户名 / Search accounts" />
             <button class="button button-dark" id="admin-refresh" type="button">刷新 / Refresh</button>
           </div>
         </header>
-        <p class="admin-note">安全提示：只有在 Supabase `ADMIN_EMAILS` / `ADMIN_USER_IDS` 中明确授权的账号才能查看此列表。注册时填写 “admin” 不会获得权限。此页面不显示密码或生日，也不能删除账号。</p>
+        <p class="admin-note">安全提示：只有在 Supabase `ADMIN_EMAILS` / `ADMIN_USER_IDS` 中明确授权的账号才能查看此列表。注册时填写 “admin” 不会获得权限。生日属于敏感个人信息，仅会显示给授权管理员；密码绝不会显示。删除账号不可撤销，操作时必须输入该账号的完整邮箱确认；管理员不能删除自己的账号或其他授权管理员。</p>
         <p class="admin-status" id="admin-status" role="status" aria-live="polite">正在检查登录状态…… / Checking sign-in…</p>
         <div class="admin-table-wrap admin-hidden" id="admin-table-wrap">
           <table class="admin-table">
             <thead>
-              <tr><th>账号 / Account</th><th>注册时间 / Created</th><th>邮箱 / Email</th><th>登录 / Sign-in</th><th>最近登录 / Last sign-in</th><th>操作 / Action</th></tr>
+              <tr><th>账号 / Account</th><th>生日 / Birthday</th><th>注册时间 / Created</th><th>邮箱 / Email</th><th>登录 / Sign-in</th><th>最近登录 / Last sign-in</th><th>操作 / Action</th></tr>
             </thead>
             <tbody id="admin-users"></tbody>
           </table>
@@ -91,7 +92,7 @@
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../script.js?v=20261004-workers-auth"></script>
+    <script src="../script.js?v=20261004-admin-birthdates"></script>
     <script>
       (() => {
         const client = window.supabaseClient;
@@ -152,6 +153,8 @@
             }
             const created = document.createElement("td");
             created.textContent = displayDate(user.createdAt);
+            const birthday = document.createElement("td");
+            birthday.textContent = user.birthDate || "未收集 / Not collected";
             const emailCell = document.createElement("td");
             const confirmed = Boolean(user.emailConfirmedAt);
             const emailBadge = document.createElement("span");
@@ -170,11 +173,12 @@
             const action = document.createElement("button");
             action.className = "admin-action";
             action.type = "button";
-            action.disabled = user.id === currentUserId;
-            action.textContent = user.id === currentUserId
+            action.disabled = user.id === currentUserId || user.isAdmin;
+            action.textContent = user.isAdmin
               ? "当前管理员 / Admin"
-              : isSuspended ? "恢复登录 / Restore" : "暂停 100 年 / Suspend 100y";
+              : isSuspended ? "恢复登录 / Restore" : "暂停登录 / Suspend sign-in";
             action.addEventListener("click", async () => {
+              if (user.id === currentUserId || user.isAdmin) return;
               const suspend = !isSuspended;
               const prompt = suspend
                 ? `确定暂停 ${user.email || "该账号"} 的登录 100 年吗？\nSuspend sign-in for this account for 100 years?`
@@ -189,8 +193,36 @@
                 action.disabled = false;
               }
             });
-            actionCell.append(action);
-            row.append(accountCell, created, emailCell, signInCell, lastSignIn, actionCell);
+            const remove = document.createElement("button");
+            remove.className = "admin-action";
+            remove.type = "button";
+            remove.disabled = user.id === currentUserId || user.isAdmin || !user.email;
+            remove.textContent = user.isAdmin ? "不可删除 / Protected" : "删除账号 / Delete";
+            remove.addEventListener("click", async () => {
+              if (!user.email || user.isAdmin) return;
+              const typedEmail = window.prompt(
+                `永久删除账号 ${user.email} 及其关联生日数据？此操作不可撤销。\n\n输入该账号的完整邮箱以确认永久删除：\nPermanently delete ${user.email} and its associated birth-date record? This cannot be undone.\n\nType the full account email to confirm:`
+              );
+              if (typedEmail === null) return;
+              remove.disabled = true;
+              try {
+                await invokeAdmin({
+                  action: "delete-user",
+                  userId: user.id,
+                  confirmEmail: typedEmail
+                });
+                status.textContent = `已永久删除账号 ${user.email}。 / Permanently deleted ${user.email}.`;
+                await loadUsers();
+              } catch (error) {
+                status.textContent = error.message;
+                remove.disabled = false;
+              }
+            });
+            const buttons = document.createElement("div");
+            buttons.className = "admin-row-actions";
+            buttons.append(action, remove);
+            actionCell.append(buttons);
+            row.append(accountCell, birthday, created, emailCell, signInCell, lastSignIn, actionCell);
             body.append(row);
           }
           pageLabel.textContent = `第 ${page} 页 / Page ${page} · ${visibleCount} 条显示 / shown`;

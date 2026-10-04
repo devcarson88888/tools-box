@@ -84,7 +84,7 @@ Deno.serve(async (request) => {
   const isAdmin = admins.userIds.includes(currentUser.id.toLowerCase()) || admins.emails.includes(currentEmail);
   if (!isAdmin) return json({ error: "This signed-in account is not on the admin allowlist." }, 403, origin);
 
-  let body: { action?: string; page?: number; userId?: string; suspend?: boolean } | null;
+  let body: { action?: string; page?: number; userId?: string; suspend?: boolean; confirmEmail?: string } | null;
   try {
     body = await request.json();
   } catch {
@@ -101,9 +101,32 @@ Deno.serve(async (request) => {
       }
       const result = await response.json();
       const users = Array.isArray(result.users) ? result.users : [];
+      const userIds = users
+        .map((user: Record<string, unknown>) => String(user.id || "").toLowerCase())
+        .filter((id: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(id));
+      let birthDatesByUser = new Map<string, string>();
+      if (userIds.length) {
+        const birthDateResponse = await supabaseAdminRequest(
+          `/rest/v1/user_birth_dates?user_id=in.(${userIds.join(",")})&select=user_id,birth_date`,
+          { method: "GET" },
+          secretKey
+        );
+        if (!birthDateResponse.ok) {
+          console.error("Supabase birth date lookup failed", birthDateResponse.status, await birthDateResponse.text());
+          return json({ error: "Could not load account birth dates. Check that the birth-date migration has been applied." }, 503, origin);
+        }
+        const birthDateRows = await birthDateResponse.json();
+        birthDatesByUser = new Map<string, string>(
+          (Array.isArray(birthDateRows) ? birthDateRows : [])
+            .map((row: Record<string, unknown>) => [String(row.user_id).toLowerCase(), String(row.birth_date)] as [string, string])
+        );
+      }
       const safeUsers = users.map((user: Record<string, unknown>) => ({
         id: user.id,
         email: user.email,
+        birthDate: birthDatesByUser.get(String(user.id).toLowerCase()) || null,
+        isAdmin: admins.userIds.includes(String(user.id).toLowerCase())
+          || admins.emails.includes(String(user.email || "").toLowerCase()),
         createdAt: user.created_at,
         lastSignInAt: user.last_sign_in_at,
         emailConfirmedAt: user.email_confirmed_at,
@@ -133,7 +156,8 @@ Deno.serve(async (request) => {
       if (!targetResponse.ok) {
         return json({ error: "Could not verify the selected account." }, 404, origin);
       }
-      const targetUser = await targetResponse.json();
+      const targetData = await targetResponse.json();
+      const targetUser = targetData.user || targetData;
       if (admins.emails.includes(String(targetUser.email || "").toLowerCase())) {
         return json({ error: "Admin accounts cannot be suspended here." }, 400, origin);
       }
@@ -148,6 +172,45 @@ Deno.serve(async (request) => {
       return json({ ok: true }, 200, origin);
     } catch (error) {
       console.error("Supabase account status update failed", error);
+      return json({ error: "Could not connect to Supabase Auth." }, 502, origin);
+    }
+  }
+
+  if (body?.action === "delete-user") {
+    const targetId = typeof body.userId === "string" ? body.userId.toLowerCase() : "";
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(targetId)) {
+      return json({ error: "Select a valid account." }, 400, origin);
+    }
+    if (targetId === currentUser.id.toLowerCase() || admins.userIds.includes(targetId)) {
+      return json({ error: "For safety, you cannot delete your own account or an admin account here." }, 400, origin);
+    }
+    if (typeof body.confirmEmail !== "string" || !body.confirmEmail.trim()) {
+      return json({ error: "Type the account email to confirm deletion." }, 400, origin);
+    }
+    try {
+      const targetResponse = await supabaseAdminRequest(`/auth/v1/admin/users/${targetId}`, { method: "GET" }, secretKey);
+      if (!targetResponse.ok) return json({ error: "Could not verify the selected account." }, 404, origin);
+      const targetData = await targetResponse.json();
+      const targetUser = targetData.user || targetData;
+      const targetEmail = String(targetUser.email || "");
+      if (!targetEmail || admins.emails.includes(targetEmail.toLowerCase())) {
+        return json({ error: "Admin accounts or accounts without a verified email cannot be deleted here." }, 400, origin);
+      }
+      if (body.confirmEmail.trim().toLowerCase() !== targetEmail.toLowerCase()) {
+        return json({ error: "The email you typed does not match this account." }, 400, origin);
+      }
+      console.warn("Administrator permanently deleting a user account", {
+        actorUserId: currentUser.id,
+        targetUserId: targetId
+      });
+      const deleteResponse = await supabaseAdminRequest(`/auth/v1/admin/users/${targetId}`, { method: "DELETE" }, secretKey);
+      if (!deleteResponse.ok) {
+        console.error("Supabase account deletion failed", deleteResponse.status, await deleteResponse.text());
+        return json({ error: "Supabase could not delete this account." }, 502, origin);
+      }
+      return json({ ok: true }, 200, origin);
+    } catch (error) {
+      console.error("Supabase account deletion failed", error);
       return json({ error: "Could not connect to Supabase Auth." }, 502, origin);
     }
   }
