@@ -97,7 +97,7 @@
     <script>
       const publishedTools = document.querySelector("#published-tools");
       const publishedStatus = document.querySelector("#published-tools-status");
-      const searchInput = document.querySelector("#tool-search");
+      const publishedSearchInput = document.querySelector("#tool-search");
       let publishedToolData = [];
       const escapeText = (value) => {
         const element = document.createElement("span");
@@ -105,7 +105,7 @@
         return element.innerHTML;
       };
       const renderPublishedTools = () => {
-        const query = searchInput.value.trim().toLowerCase();
+        const query = publishedSearchInput.value.trim().toLowerCase();
         const tools = publishedToolData.filter((tool) => `${tool.name} ${tool.description}`.toLowerCase().includes(query));
         publishedTools.innerHTML = tools.length
           ? tools.map((tool) => `<a class="search-result card-lilac" href="${tool.url}"><span class="tool-icon">↗</span><span><h3>${escapeText(tool.name)}</h3><p>${escapeText(tool.description || "No description provided.")}</p></span></a>`).join("")
@@ -124,7 +124,7 @@
           publishedTools.innerHTML = '<p class="search-empty">Published tools are temporarily unavailable.</p>';
         }
       };
-      searchInput.addEventListener("input", renderPublishedTools);
+      publishedSearchInput.addEventListener("input", renderPublishedTools);
       loadPublishedTools();
     </script>
   </body>
