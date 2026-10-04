@@ -35,6 +35,15 @@
             <button class="button button-dark auth-submit" type="submit" data-i18n="signupButton">Create account</button>
             <p class="form-feedback" aria-live="polite"></p>
           </form>
+          <form class="auth-form auth-hidden" id="signup-verify-form" action="#" method="post">
+            <p class="form-hint" id="signup-verify-copy">我们已向你的邮箱发送验证码。请输入邮件中的验证码完成注册。<br />We sent a verification code to your email. Enter it to finish signing up.</p>
+            <label for="signup-code">邮箱验证码 / Email code</label>
+            <input id="signup-code" name="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required />
+            <button class="button button-dark auth-submit" type="submit" id="verify-signup-button">验证邮箱 / Verify email</button>
+            <button class="button button-light auth-submit" type="button" id="resend-signup-code">重新发送验证码 / Resend code</button>
+            <button class="auth-back-button" type="button" id="back-to-signup">返回注册 / Back to signup</button>
+            <p class="form-feedback" id="signup-verify-feedback" aria-live="polite"></p>
+          </form>
           <p class="auth-switch"><span data-i18n="haveAccount">Already have an account?</span> <a href="/login/" data-i18n="login">Log in</a></p>
         </section>
         <aside class="auth-art auth-art-peach" aria-hidden="true"><span class="auth-star">✦</span><strong>make space<br /><em>for ideas.</em></strong><span class="auth-orbit"></span></aside>
@@ -42,6 +51,6 @@
       <footer class="footer"><span>© 2026 tools.box</span><span data-i18n="privateNote">Simple tools, made with care.</span></footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../script.js?v=20261004-admin-birthdates"></script>
+    <script src="../script.js?v=20261004-signup-code"></script>
   </body>
 </html>

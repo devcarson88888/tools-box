@@ -267,16 +267,19 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
     const name = form.querySelector('input[name="name"]')?.value.trim();
     const birthDate = form.querySelector('input[name="date_of_birth"]')?.value;
     const submitButton = form.querySelector(".auth-submit");
+    const setFeedback = (message) => {
+      if (feedback) feedback.textContent = message;
+    };
     if (!supabaseClient) {
-      if (feedback) feedback.textContent = authFeedback[language][type];
+      setFeedback(authFeedback[language][type]);
       return;
     }
     if (type === "signup" && !isAtLeastEighteen(birthDate)) {
-      if (feedback) feedback.textContent = ageRequirementCopy[language] || ageRequirementCopy.en;
+      setFeedback(ageRequirementCopy[language] || ageRequirementCopy.en);
       return;
     }
     if (submitButton) submitButton.disabled = true;
-    if (feedback) feedback.textContent = "";
+    setFeedback("");
     const request = type === "login"
       ? supabaseClient.auth.signInWithPassword({ email, password })
       : supabaseClient.auth.signUp({
@@ -289,19 +292,145 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
       });
     request.then(({ data, error }) => {
       if (error) {
-        if (feedback) feedback.textContent = error.message;
+        setFeedback(friendlyAuthError(error, language));
         return;
       }
       if (type === "login" && data.session?.user) updateAccountUi(data.session.user);
-      if (feedback) feedback.textContent = authSuccess[language][type];
-      if (type === "login") window.setTimeout(() => { window.location.href = siteHomeUrl; }, 700);
+      if (type === "signup" && data.user && !data.session) {
+        beginSignupVerification(email);
+        return;
+      }
+      setFeedback(authSuccess[language][type]);
+      if (type === "login" && data.session?.user) window.setTimeout(() => { window.location.href = siteHomeUrl; }, 700);
     }).catch(() => {
-      if (feedback) feedback.textContent = authFeedback[language][type];
+      setFeedback(authFeedback[language][type]);
     }).finally(() => {
       if (submitButton) submitButton.disabled = false;
     });
   });
 });
+
+const signupForm = document.querySelector("[data-auth-form='signup']");
+const signupVerifyForm = document.querySelector("#signup-verify-form");
+const signupEmailInput = signupForm?.querySelector('input[name="email"]');
+const signupCodeInput = document.querySelector("#signup-code");
+const signupVerifyFeedback = document.querySelector("#signup-verify-feedback");
+const verifySignupButton = document.querySelector("#verify-signup-button");
+const resendSignupButton = document.querySelector("#resend-signup-code");
+let signupVerificationEmail = "";
+let signupResendAvailableAt = 0;
+
+function friendlyAuthError(error, language) {
+  const detail = String(error?.message || "");
+  if (/email address not authorized/i.test(detail)) {
+    return {
+      en: "Supabase's default email service only sends to authorized team addresses. Configure custom SMTP to send verification emails to other users.",
+      zh: "Supabase 默认邮件服务只向项目团队授权邮箱发送。要给其他用户发送验证码，请先配置自定义 SMTP。",
+      es: "El correo predeterminado de Supabase solo envía a direcciones autorizadas del equipo. Configura SMTP propio para enviar códigos a otros usuarios."
+    }[language] || "Supabase's default email service only sends to authorized team addresses. Configure custom SMTP.";
+  }
+  return detail || authFeedback[language]?.signup || authFeedback.en.signup;
+}
+
+function beginSignupVerification(email) {
+  signupVerificationEmail = email;
+  signupResendAvailableAt = Date.now() + 60_000;
+  sessionStorage.setItem("tools-box-pending-signup-email", email);
+  signupForm?.classList.add("auth-hidden");
+  signupVerifyForm?.classList.remove("auth-hidden");
+  const copy = document.querySelector("#signup-verify-copy");
+  if (copy) copy.textContent = `验证码已发送至 ${email}。请输入邮件中的 6 位数字验证码。\nA verification code was sent to ${email}. Enter the 6-digit code from the email.`;
+  if (signupVerifyFeedback) signupVerifyFeedback.textContent = "请检查收件箱和垃圾邮件文件夹。 / Check your inbox and spam folder.";
+  signupCodeInput?.focus();
+  updateSignupResendButton();
+}
+
+function updateSignupResendButton() {
+  if (!resendSignupButton) return;
+  const remaining = Math.ceil((signupResendAvailableAt - Date.now()) / 1000);
+  resendSignupButton.disabled = remaining > 0;
+  if (remaining > 0) {
+    resendSignupButton.textContent = `重新发送 / Resend (${remaining}s)`;
+    window.setTimeout(updateSignupResendButton, 1000);
+  } else {
+    resendSignupButton.textContent = "重新发送验证码 / Resend code";
+  }
+}
+
+if (signupForm && signupVerifyForm) {
+  const pendingEmail = sessionStorage.getItem("tools-box-pending-signup-email");
+  if (pendingEmail) {
+    signupVerificationEmail = pendingEmail;
+    signupForm.querySelectorAll("input").forEach((input) => { input.disabled = true; });
+    signupForm.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+    signupEmailInput.value = pendingEmail;
+    signupForm.classList.add("auth-hidden");
+    signupVerifyForm.classList.remove("auth-hidden");
+    const copy = document.querySelector("#signup-verify-copy");
+    if (copy) copy.textContent = `验证码已发送至 ${pendingEmail}。请输入邮件中的 6 位数字验证码。\nA verification code was sent to ${pendingEmail}. Enter the 6-digit code from the email.`;
+    signupResendAvailableAt = 0;
+    updateSignupResendButton();
+  }
+
+  signupVerifyForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const code = signupCodeInput.value.trim();
+    if (!signupVerificationEmail || !/^\d{6}$/.test(code)) {
+      signupVerifyFeedback.textContent = "请输入邮件中的 6 位数字验证码。 / Enter the 6-digit code from your email.";
+      return;
+    }
+    verifySignupButton.disabled = true;
+    signupVerifyFeedback.textContent = "正在验证…… / Verifying…";
+    try {
+      const { data, error } = await supabaseClient.auth.verifyOtp({
+        email: signupVerificationEmail,
+        token: code,
+        type: "signup"
+      });
+      if (error) throw error;
+      if (data.session?.user) updateAccountUi(data.session.user);
+      sessionStorage.removeItem("tools-box-pending-signup-email");
+      signupVerifyFeedback.textContent = "邮箱已验证，正在进入网站。 / Email verified. Opening the site…";
+      window.setTimeout(() => { window.location.href = siteHomeUrl; }, 700);
+    } catch (error) {
+      console.error("Signup email verification failed", error);
+      signupVerifyFeedback.textContent = error.message || "验证码无效或已过期，请重试。 / The code is invalid or expired. Try again.";
+    } finally {
+      verifySignupButton.disabled = false;
+    }
+  });
+
+  resendSignupButton.addEventListener("click", async () => {
+    if (!signupVerificationEmail || resendSignupButton.disabled) return;
+    resendSignupButton.disabled = true;
+    signupVerifyFeedback.textContent = "正在重新发送…… / Sending another code…";
+    try {
+      const { error } = await supabaseClient.auth.resend({
+        type: "signup",
+        email: signupVerificationEmail,
+        options: { emailRedirectTo: siteHomeUrl }
+      });
+      if (error) throw error;
+      signupResendAvailableAt = Date.now() + 60_000;
+      signupVerifyFeedback.textContent = "验证码已重新发送。 / A new code has been sent.";
+      updateSignupResendButton();
+    } catch (error) {
+      console.error("Signup verification resend failed", error);
+      signupVerifyFeedback.textContent = friendlyAuthError(error, localStorage.getItem("tools-box-language") || "en");
+      signupResendAvailableAt = Date.now() + 60_000;
+      updateSignupResendButton();
+    }
+  });
+
+  document.querySelector("#back-to-signup")?.addEventListener("click", () => {
+    sessionStorage.removeItem("tools-box-pending-signup-email");
+    signupVerificationEmail = "";
+    signupVerifyForm.classList.add("auth-hidden");
+    signupForm.classList.remove("auth-hidden");
+    signupForm.querySelectorAll("input,button").forEach((input) => { input.disabled = false; });
+    signupVerifyFeedback.textContent = "";
+  });
+}
 
 function isAtLeastEighteen(value) {
   if (!value) return false;
