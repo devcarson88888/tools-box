@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Publisher access and network safety policy notice." />
+    <title>Publisher access notice — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .ban-main { align-items: center; display: grid; min-height: 70vh; padding: 70px 10px; }
+      .ban-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: 0 18px 45px rgba(40,35,75,.08); margin: 0 auto; max-width: 710px; padding: clamp(26px, 6vw, 58px); width: 100%; }
+      .ban-symbol { align-items: center; background: #fff0ed; border: 1px solid #f0c9c1; border-radius: 50%; color: #a64036; display: flex; font: 700 27px "Space Grotesk", sans-serif; height: 56px; justify-content: center; margin-bottom: 23px; width: 56px; }
+      .ban-card h1 { font-size: clamp(38px, 6vw, 58px); letter-spacing: -2.5px; margin: 18px 0; }
+      .ban-card h1 em { color: #a64036; font-style: normal; }
+      .ban-copy { color: var(--muted); font-size: 14px; line-height: 1.75; max-width: 570px; }
+      .ban-time { background: var(--paper); border: 1px solid var(--line); border-radius: 9px; margin: 24px 0; padding: 15px 17px; }
+      .ban-time strong { display: block; font-size: 11px; margin-bottom: 5px; }
+      .ban-time span { color: var(--muted); font: 12px/1.6 Consolas, monospace; overflow-wrap: anywhere; }
+      .ban-policy { border-left: 3px solid #e48a73; color: var(--muted); font-size: 12px; line-height: 1.7; margin: 24px 0 30px; padding-left: 14px; }
+      .ban-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+      .ban-confirmed[hidden] { display: none; }
+      .ban-status { color: var(--muted); font-size: 12px; line-height: 1.6; }
+      @media (max-width: 600px) { .ban-main { padding: 40px 0; } }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <a class="auth-home-link" href="/">Home</a>
+      </nav>
+      <main class="ban-main">
+        <section class="ban-card" aria-labelledby="ban-title">
+          <div class="ban-symbol" aria-hidden="true">!</div>
+          <div class="eyebrow"><span class="eyebrow-dot"></span><span id="ban-eyebrow">Network safety notice</span></div>
+          <h1 id="ban-title">Check publisher<br /><em>status.</em></h1>
+          <p class="ban-copy" id="ban-copy">Authorize the GitHub publisher account to check its status. If publishing was suspended, this page will show the moderation record and timestamp.</p>
+          <div class="ban-time ban-confirmed" hidden>
+            <strong id="ban-time-label">Recorded at</strong>
+            <span id="ban-time">Checking the moderation record…</span>
+          </div>
+          <p class="ban-policy ban-confirmed" id="ban-policy" hidden>Useful Tools Box prohibits pornographic or sexually explicit material in published tools. Automated checks can make mistakes and cannot reliably identify every image, encoded payload, or obfuscated script. This notice records the publisher restriction; contact the site administrator to request a review.</p>
+          <p class="ban-status" id="ban-status" aria-live="polite"></p>
+          <div class="ban-actions">
+            <a class="button button-dark" href="/">Return home</a>
+            <button class="button button-light" id="check-ban-status" type="button">Check publisher status</button>
+            <a class="button button-light ban-confirmed" href="https://github.com/devcarson88888/tools-box/issues/new?title=Publisher%20moderation%20review&amp;body=I%20would%20like%20to%20request%20a%20review%20of%20a%20publisher%20moderation%20decision." target="_blank" rel="noopener" hidden>Request a review</a>
+          </div>
+        </section>
+      </main>
+      <footer class="footer">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../script.js?v=20261004-age-moderation"></script>
+    <script>
+      const functionUrl = "https://svjbtfhbwpavpvrjfbbe.supabase.co/functions/v1/github-publish";
+      const status = document.querySelector("#ban-status");
+      const time = document.querySelector("#ban-time");
+      const lang = localStorage.getItem("tools-box-language") || "en";
+      const copy = {
+        en: { eyebrow: "Network safety notice", title: "Publisher access<br /><em>permanently suspended.</em>", body: "This publisher account was permanently blocked from publishing tools after a submission matched the adult-content safety policy. The restriction applies to publishing; it does not claim that your site login has been disabled.", neutralTitle: "Check publisher<br /><em>status.</em>", neutralBody: "Authorize the GitHub publisher account to check its status. If publishing was suspended, this page will show the moderation record and timestamp.", clearTitle: "No active ban<br /><em>found.</em>", clearBody: "The authorized GitHub publisher account has no active publishing ban.", recorded: "Recorded at", checking: "Checking the moderation record…", policy: "Useful Tools Box prohibits pornographic or sexually explicit material in published tools. Automated checks can make mistakes and cannot reliably identify every image, encoded payload, or obfuscated script. This notice records the publisher restriction; contact the site administrator to request a review.", noBan: "No active publisher ban was found for the authorized GitHub account.", login: "Select “Check publisher status” to authorize the GitHub publisher account and retrieve its moderation record.", failed: "The moderation record could not be loaded. Please try again later.", review: "Request a review", check: "Check publisher status" },
+        zh: { eyebrow: "网络安全通知", title: "发布权限<br /><em>已被永久暂停。</em>", body: "该发布者提交的内容触发了成人内容安全规则，因此发布权限已被永久封禁。此限制针对发布功能，不代表网站登录账户已被停用。", neutralTitle: "查询发布<br /><em>状态。</em>", neutralBody: "请授权 GitHub 发布账户以查询状态。如发布权限已被暂停，此页面会显示处理记录和时间。", clearTitle: "未发现有效<br /><em>封禁。</em>", clearBody: "已授权的 GitHub 发布账户目前没有有效的发布封禁。", recorded: "记录时间", checking: "正在查询处理记录……", policy: "Useful Tools Box 禁止在已发布工具中包含色情或露骨性内容。自动检测可能误判，也无法可靠识别所有图片、编码内容或混淆脚本。本通知记录了发布限制；如需申诉，请联系网站管理员。", noBan: "授权的 GitHub 账户没有有效的发布封禁记录。", login: "点击“查询发布状态”以授权 GitHub 发布账户并获取处理记录。", failed: "无法加载处理记录，请稍后重试。", review: "申请复核", check: "查询发布状态" },
+        es: { eyebrow: "Aviso de seguridad de red", title: "Publicación<br /><em>suspendida permanentemente.</em>", body: "Esta cuenta de publicación fue bloqueada permanentemente después de que un envío coincidiera con la política de contenido para adultos. La restricción afecta a la publicación, no necesariamente al inicio de sesión.", neutralTitle: "Consultar el<br /><em>estado.</em>", neutralBody: "Autoriza la cuenta de GitHub para consultar su estado. Si se suspendió la publicación, aquí aparecerán el registro y la fecha.", clearTitle: "No hay una<br /><em>suspensión activa.</em>", clearBody: "La cuenta de GitHub autorizada no tiene una suspensión activa para publicar.", recorded: "Registrado", checking: "Consultando el registro…", policy: "Useful Tools Box prohíbe el material pornográfico o sexualmente explícito. Las comprobaciones automáticas pueden equivocarse y no detectan de forma fiable todas las imágenes, cargas codificadas o scripts ofuscados. Contacta con la administración para solicitar una revisión.", noBan: "No se encontró una suspensión activa para la cuenta de GitHub autorizada.", login: "Selecciona “Comprobar estado” para autorizar la cuenta de GitHub y consultar el registro.", failed: "No se pudo cargar el registro. Inténtalo más tarde.", review: "Solicitar revisión", check: "Comprobar estado" }
+      }[lang] || {
+        eyebrow: "Network safety notice", title: "Publisher access<br /><em>permanently suspended.</em>", body: "This publisher account was permanently blocked from publishing tools after a submission matched the adult-content safety policy. The restriction applies to publishing; it does not claim that your site login has been disabled.", neutralTitle: "Check publisher<br /><em>status.</em>", neutralBody: "Authorize the GitHub publisher account to check its status. If publishing was suspended, this page will show the moderation record and timestamp.", clearTitle: "No active ban<br /><em>found.</em>", clearBody: "The authorized GitHub publisher account has no active publishing ban.", recorded: "Recorded at", checking: "Checking the moderation record…", policy: "Useful Tools Box prohibits pornographic or sexually explicit material in published tools. Automated checks can make mistakes and cannot reliably identify every image, encoded payload, or obfuscated script. This notice records the publisher restriction; contact the site administrator to request a review.", noBan: "No active publisher ban was found for the authorized GitHub account.", login: "Select “Check publisher status” to authorize the GitHub publisher account and retrieve its moderation record.", failed: "The moderation record could not be loaded. Please try again later.", review: "Request a review", check: "Check publisher status"
+      };
+      document.querySelector("#ban-eyebrow").textContent = copy.eyebrow;
+      const title = document.querySelector("#ban-title");
+      const body = document.querySelector("#ban-copy");
+      const confirmedElements = document.querySelectorAll(".ban-confirmed");
+      title.innerHTML = copy.neutralTitle;
+      body.textContent = copy.neutralBody;
+      document.querySelector("#ban-time-label").textContent = copy.recorded;
+      document.querySelector("#ban-policy").textContent = copy.policy;
+      document.querySelector(".ban-actions .button-light").textContent = copy.review;
+      document.querySelector("#check-ban-status").textContent = copy.check;
+      status.textContent = copy.checking;
+      const authorize = () => {
+        const returnTo = `${window.location.origin}/banned/?github=authorized`;
+        window.location.href = `${functionUrl}?action=login&return_to=${encodeURIComponent(returnTo)}`;
+      };
+      const loadModerationRecord = async () => {
+        if (!window.supabaseClient) {
+          status.textContent = copy.failed;
+          time.textContent = "";
+          return;
+        }
+        try {
+          const { data, error } = await window.supabaseClient.functions.invoke("github-publish", { body: { action: "ban-status" } });
+          if (error?.context?.status === 401 || error?.status === 401) {
+            time.textContent = "";
+            status.textContent = copy.login;
+            return;
+          }
+          if (error) throw error;
+          if (!data.banned) {
+            time.textContent = "";
+            title.innerHTML = copy.clearTitle;
+            body.textContent = copy.clearBody;
+            status.textContent = copy.noBan;
+            document.querySelector("#check-ban-status").hidden = true;
+            return;
+          }
+          title.innerHTML = copy.title;
+          body.textContent = copy.body;
+          confirmedElements.forEach((element) => { element.hidden = false; });
+          document.querySelector("#check-ban-status").hidden = true;
+          const recordedAt = new Date(data.bannedAt);
+          time.textContent = Number.isNaN(recordedAt.getTime())
+            ? data.bannedAt
+            : `${recordedAt.toLocaleString()} (UTC ${recordedAt.toISOString()})${data.githubLogin ? ` · @${data.githubLogin}` : ""}`;
+          status.textContent = "";
+        } catch (error) {
+          console.error("Could not load publisher moderation record", error);
+          time.textContent = "";
+          status.textContent = copy.failed;
+        }
+      };
+      document.querySelector("#check-ban-status").addEventListener("click", authorize);
+      if (new URLSearchParams(window.location.search).has("github")) window.history.replaceState({}, "", "/banned/");
+      loadModerationRecord();
+    </script>
+  </body>
+</html>

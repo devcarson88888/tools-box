@@ -24,6 +24,9 @@
           <form class="auth-form" data-auth-form="signup" action="#" method="post">
             <label for="signup-name" data-i18n="nameLabel">Your name</label>
             <input id="signup-name" name="name" type="text" autocomplete="name" placeholder="What should we call you?" required />
+            <label for="signup-birth-date" data-i18n="birthDateLabel">Date of birth</label>
+            <input id="signup-birth-date" name="date_of_birth" type="date" autocomplete="bday" required />
+            <p class="form-hint" data-i18n="adultOnlyNotice">You must be 18 or older to create an account. Your birth date is checked and not retained.</p>
             <label for="signup-email" data-i18n="emailLabel">Email address</label>
             <input id="signup-email" name="email" type="email" autocomplete="email" placeholder="you@example.com" required />
             <label for="signup-password" data-i18n="passwordLabel">Password</label>
@@ -39,6 +42,6 @@
       <footer class="footer"><span>© 2026 tools.box</span><span data-i18n="privateNote">Simple tools, made with care.</span></footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../script.js?v=20260914-auth"></script>
+    <script src="../script.js?v=20261004-age-moderation"></script>
   </body>
 </html>

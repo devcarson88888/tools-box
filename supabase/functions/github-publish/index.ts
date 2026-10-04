@@ -143,6 +143,58 @@ const putFile = async (path: string, content: string, message: string, token: st
   }, token);
 };
 
+const moderationUrl = Deno.env.get("SUPABASE_URL") || "https://svjbtfhbwpavpvrjfbbe.supabase.co";
+
+const moderationRequest = async (path: string, init: RequestInit = {}) => {
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (!serviceKey) throw new Error("Publisher moderation storage is not configured.");
+  return await fetch(`${moderationUrl}/rest/v1/${path}`, {
+    ...init,
+    headers: {
+      apikey: serviceKey,
+      Authorization: `Bearer ${serviceKey}`,
+      "Content-Type": "application/json",
+      ...(init.headers || {})
+    }
+  });
+};
+
+const getPublisherBan = async (githubUserId: number) => {
+  const response = await moderationRequest(
+    `github_publisher_bans?github_user_id=eq.${githubUserId}&select=banned_at&limit=1`
+  );
+  if (!response.ok) throw new Error("Could not check publisher moderation status.");
+  const rows = await response.json();
+  return Array.isArray(rows) && rows.length ? rows[0].banned_at as string : null;
+};
+
+const banPublisher = async (user: { id: number; login: string }) => {
+  const response = await moderationRequest("github_publisher_bans?on_conflict=github_user_id", {
+    method: "POST",
+    headers: { Prefer: "resolution=ignore-duplicates,return=representation" },
+    body: JSON.stringify({
+      github_user_id: user.id,
+      github_login: user.login,
+      reason_code: "explicit_adult_content"
+    })
+  });
+  if (!response.ok) throw new Error("Could not persist publisher moderation status.");
+  const inserted = await response.json();
+  if (Array.isArray(inserted) && inserted[0]?.banned_at) return inserted[0].banned_at as string;
+  const existingBan = await getPublisherBan(user.id);
+  if (!existingBan) throw new Error("Publisher moderation status was not recorded.");
+  return existingBan;
+};
+
+const containsExplicitAdultContent = (files: Record<string, string>) => {
+  const patterns = [
+    /\b(?:porn(?:ography)?|hentai|xxx|sex\s*(?:tape|video|cam)|nudes?|naked\s*(?:girl|woman|man)|explicit\s+sex|blowjob|handjob|onlyfans)\b/i,
+    /色情|成人影片|成人内容|黄色网站|黄网|裸聊|裸照|裸体|淫秽|性交|手淫|口交/,
+    /ポルノ|アダルト動画|エロ動画|性行為/
+  ];
+  return Object.values(files).some((content) => patterns.some((pattern) => pattern.test(content)));
+};
+
 Deno.serve(async (request) => {
   const origin = getOrigin(request);
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(origin) });
@@ -199,6 +251,29 @@ Deno.serve(async (request) => {
   const user = await getGithubUser(token);
   if (!user?.login) return json({ error: "GitHub authorization expired. Please authorize again." }, 401, origin);
 
+  if (requestedAction === "ban-status") {
+    try {
+      const bannedAt = await getPublisherBan(user.id);
+      return bannedAt
+        ? json({ banned: true, bannedAt, githubLogin: user.login }, 200, origin)
+        : json({ banned: false }, 200, origin);
+    } catch (error) {
+      console.error("Publisher moderation lookup failed", error);
+      return json({ error: "Could not check publisher moderation status." }, 503, origin);
+    }
+  }
+
+  let bannedAt: string | null;
+  try {
+    bannedAt = await getPublisherBan(user.id);
+  } catch (error) {
+    console.error("Publisher moderation lookup failed", error);
+    return json({ error: "Publishing is unavailable because moderation status could not be checked." }, 503, origin);
+  }
+  if (bannedAt) {
+    return json({ error: "Publisher access is permanently suspended for an adult-content policy violation.", banned: true, bannedAt }, 403, origin);
+  }
+
   if (requestedAction === "my-tools") {
     if (user.login.toLowerCase() !== allowedPublisher.toLowerCase()) {
       return json({ error: "Only the repository owner can manage published tools." }, 403, origin);
@@ -216,6 +291,19 @@ Deno.serve(async (request) => {
     const project = safeProjectName(body?.projectName);
     const description = cleanDescription(body?.description);
     if (!project || !description) return json({ error: "Use a valid project name and a description up to 280 characters." }, 400, origin);
+    if (containsExplicitAdultContent({ description })) {
+      try {
+        const timestamp = await banPublisher(user);
+        return json({
+          error: "Publisher access is permanently suspended for an adult-content policy violation.",
+          banned: true,
+          bannedAt: timestamp
+        }, 403, origin);
+      } catch (error) {
+        console.error("Publisher ban could not be persisted", error);
+        return json({ error: "The description was blocked, but the permanent moderation record could not be saved. Contact the site administrator." }, 503, origin);
+      }
+    }
     const metadataPath = `/repos/${owner}/${repo}/contents/create/${project}/tool.json`;
     const existing = await github(metadataPath, { method: "GET" }, token);
     let metadata: Record<string, string>;
@@ -265,6 +353,19 @@ Deno.serve(async (request) => {
   const publishableFiles: Record<string, string> = {};
   for (const fileName of ["index.html", "styles.css", "script.js"]) {
     if (typeof files[fileName] === "string") publishableFiles[fileName] = files[fileName];
+  }
+  if (containsExplicitAdultContent({ ...publishableFiles, description })) {
+    try {
+      const timestamp = await banPublisher(user);
+      return json({
+        error: "Publisher access is permanently suspended for an adult-content policy violation.",
+        banned: true,
+        bannedAt: timestamp
+      }, 403, origin);
+    } catch (error) {
+      console.error("Publisher ban could not be persisted", error);
+      return json({ error: "Publishing was blocked, but the permanent moderation record could not be saved. Contact the site administrator." }, 503, origin);
+    }
   }
   publishableFiles["index.html"] = attachProjectAssets(
     publishableFiles["index.html"],

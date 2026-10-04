@@ -25,6 +25,11 @@ const authSuccess = {
   zh: { login: "登录成功，正在跳转……", signup: "账户已创建，请检查邮箱完成验证。" },
   es: { login: "Sesión iniciada. Redirigiendo…", signup: "Cuenta creada. Revisa tu correo para confirmar la dirección." }
 };
+const ageRequirementCopy = {
+  en: "You must be 18 or older to create an account.",
+  zh: "必须年满 18 岁才能创建账户。",
+  es: "Debes tener 18 años o más para crear una cuenta."
+};
 const supabaseUrl = "https://svjbtfhbwpavpvrjfbbe.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2amJ0Zmhid3BhdnB2cmpmYmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODcwMDMsImV4cCI6MjEwNDk2MzAwM30.a7Iwkxj5sjVE_3YC1og-4_OAXi8Yhx5nkW6TVkIduNY";
 const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey, {
@@ -78,6 +83,19 @@ const translations = {
   }
 };
 
+Object.assign(translations.en, {
+  birthDateLabel: "Date of birth",
+  adultOnlyNotice: "You must be 18 or older to create an account. Your birth date is checked and not retained."
+});
+Object.assign(translations.zh, {
+  birthDateLabel: "出生日期",
+  adultOnlyNotice: "必须年满 18 岁才能注册。系统会验证出生日期，但不会保存该日期。"
+});
+Object.assign(translations.es, {
+  birthDateLabel: "Fecha de nacimiento",
+  adultOnlyNotice: "Debes tener 18 años o más para registrarte. La fecha se verifica y no se conserva."
+});
+
 function setLanguage(language) {
   const copy = translations[language] || translations.en;
   const navCopy = { ".nav-link:nth-child(1)": copy.home, ".nav-link:nth-child(2)": copy.allTools, ".nav-link:nth-child(3)": copy.categories, ".nav-link:nth-child(4)": copy.about, ".login-link": copy.login };
@@ -85,6 +103,8 @@ function setLanguage(language) {
     const element = document.querySelector(selector);
     if (element) element.textContent = value;
   });
+  const birthDateHint = document.querySelector(".form-hint[data-i18n='adultOnlyNotice']");
+  if (birthDateHint) birthDateHint.textContent = copy.adultOnlyNotice;
   const signupButton = signupNavLink;
   if (signupButton) signupButton.firstChild.textContent = `${copy.signup} `;
   if (switchAccountLink) switchAccountLink.textContent = switchAccountLabels[language] || switchAccountLabels.en;
@@ -241,9 +261,14 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
     const email = form.querySelector('input[type="email"]')?.value.trim();
     const password = form.querySelector('input[type="password"]')?.value;
     const name = form.querySelector('input[name="name"]')?.value.trim();
+    const birthDate = form.querySelector('input[name="date_of_birth"]')?.value;
     const submitButton = form.querySelector(".auth-submit");
     if (!supabaseClient) {
       if (feedback) feedback.textContent = authFeedback[language][type];
+      return;
+    }
+    if (type === "signup" && !isAtLeastEighteen(birthDate)) {
+      if (feedback) feedback.textContent = ageRequirementCopy[language] || ageRequirementCopy.en;
       return;
     }
     if (submitButton) submitButton.disabled = true;
@@ -254,7 +279,7 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
         email,
         password,
         options: {
-          data: { name },
+          data: { name, date_of_birth: birthDate },
           emailRedirectTo: siteHomeUrl
         }
       });
@@ -273,5 +298,23 @@ document.querySelectorAll("[data-auth-form]").forEach((form) => {
     });
   });
 });
+
+function isAtLeastEighteen(value) {
+  if (!value) return false;
+  const [year, month, day] = value.split("-").map(Number);
+  const birthDate = new Date(year, month - 1, day);
+  const today = new Date();
+  if (birthDate.getFullYear() !== year || birthDate.getMonth() !== month - 1 || birthDate.getDate() !== day || birthDate > today) return false;
+  let age = today.getFullYear() - year;
+  if (today.getMonth() < month - 1 || (today.getMonth() === month - 1 && today.getDate() < day)) age -= 1;
+  return age >= 18;
+}
+
+const birthDateInput = document.querySelector('input[name="date_of_birth"]');
+if (birthDateInput) {
+  const today = new Date();
+  birthDateInput.max = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+}
+
 setLanguage(localStorage.getItem("tools-box-language") || "en");
 renderResults();
