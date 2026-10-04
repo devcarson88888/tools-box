@@ -21,9 +21,15 @@ const getOrigin = (request: Request) => {
   return isAllowedOrigin(origin) ? origin : defaultOrigin;
 };
 
-const redirectUri = (request: Request) =>
-  Deno.env.get("GITHUB_REDIRECT_URI") ||
-  `${new URL(request.url).origin}/functions/v1/github-publish?action=callback`;
+const redirectUri = (request: Request) => {
+  const configuredUri = Deno.env.get("GITHUB_REDIRECT_URI");
+  if (configuredUri) return configuredUri;
+  const endpoint = new URL(request.url);
+  endpoint.protocol = "https:";
+  endpoint.search = "?action=callback";
+  endpoint.hash = "";
+  return endpoint.toString();
+};
 
 const parseCookies = (request: Request) =>
   Object.fromEntries((request.headers.get("cookie") || "").split(";").filter(Boolean).map((item) => {
