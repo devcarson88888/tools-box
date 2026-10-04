@@ -57,7 +57,7 @@
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../script.js?v=20260914-auth"></script>
+    <script src="../script.js?v=20261004-age-moderation"></script>
     <script>
       const endpoint = "https://svjbtfhbwpavpvrjfbbe.supabase.co/functions/v1/github-publish";
       const status = document.querySelector("#my-tools-status");
@@ -102,7 +102,15 @@
             const { error } = await window.supabaseClient.functions.invoke("github-publish", {
               body: { action: "update-description", projectName: tool.name, description: text }
             });
-            if (error) throw error;
+            if (error) {
+              let response = null;
+              try { response = await error.context?.json(); } catch { /* Edge Function may return a non-JSON error. */ }
+              if (response?.banned) {
+                window.location.href = `/banned/?at=${encodeURIComponent(response.bannedAt || "")}`;
+                return;
+              }
+              throw error;
+            }
             message.textContent = "Description saved.";
           } catch (error) {
             message.textContent = error.message || "Could not save the description.";
@@ -130,6 +138,14 @@
               authorize();
             }
             return;
+          }
+          if (error?.context?.status === 403) {
+            let response = null;
+            try { response = await error.context?.json(); } catch { /* Edge Function may return a non-JSON error. */ }
+            if (response?.banned) {
+              window.location.href = `/banned/?at=${encodeURIComponent(response.bannedAt || "")}`;
+              return;
+            }
           }
           if (error) throw error;
           const tools = data.tools || [];
