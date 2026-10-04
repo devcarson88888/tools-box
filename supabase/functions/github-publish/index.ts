@@ -89,11 +89,10 @@ Deno.serve(async (request) => {
     const tokenData = await tokenResponse.json();
     if (!tokenResponse.ok || !tokenData.access_token) return new Response("GitHub authorization failed.", { status: 502 });
     const returnTo = stored.split("|").slice(1).join("|");
-    const headers = new Headers({ "Content-Type": "text/html; charset=utf-8" });
+    const headers = new Headers({ Location: returnTo });
     headers.append("Set-Cookie", `github_access_token=${encodeURIComponent(tokenData.access_token)}; HttpOnly; Secure; SameSite=None; Max-Age=3600; Path=/`);
     headers.append("Set-Cookie", `github_oauth_state=; HttpOnly; Secure; SameSite=None; Max-Age=0; Path=/`);
-    headers.append("Content-Security-Policy", "default-src 'none'; script-src 'unsafe-inline'");
-    return new Response(`<!doctype html><meta charset="utf-8"><script>location.replace(${JSON.stringify(returnTo)})</script>`, { status: 200, headers });
+    return new Response(null, { status: 302, headers });
   }
 
   if (request.method !== "POST") return json({ error: "Use POST to publish." }, 405, origin);
