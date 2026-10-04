@@ -9,8 +9,10 @@ const isAllowedOrigin = (origin: string) =>
 const corsHeaders = (origin: string) => ({
   "Access-Control-Allow-Origin": origin,
   "Access-Control-Allow-Credentials": "true",
-  "Access-Control-Allow-Headers": "content-type",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Vary": "Origin",
+  "Cache-Control": "no-store",
   "Content-Type": "application/json"
 });
 
@@ -118,7 +120,10 @@ Deno.serve(async (request) => {
         ...(existingData?.sha ? { sha: existingData.sha } : {})
       })
     }, token);
-    if (!response.ok) return json({ error: `GitHub rejected ${fileName}.` }, response.status, origin);
+    if (!response.ok) {
+      const githubError = await response.json().catch(() => null);
+      return json({ error: githubError?.message || `GitHub rejected ${fileName}.` }, response.status, origin);
+    }
   }
   return json({ ok: true, path: `create/${project}/` }, 200, origin);
 });

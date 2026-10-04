@@ -28,6 +28,9 @@ const authSuccess = {
 const supabaseUrl = "https://svjbtfhbwpavpvrjfbbe.supabase.co";
 const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN2amJ0Zmhid3BhdnB2cmpmYmJlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzODcwMDMsImV4cCI6MjEwNDk2MzAwM30.a7Iwkxj5sjVE_3YC1og-4_OAXi8Yhx5nkW6TVkIduNY";
 const supabaseClient = window.supabase?.createClient(supabaseUrl, supabaseAnonKey, {
+  global: {
+    fetch: (input, init = {}) => fetch(input, { ...init, credentials: "include" })
+  },
   auth: {
     persistSession: true,
     autoRefreshToken: true,

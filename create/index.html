@@ -212,19 +212,29 @@
           status.textContent = "Supabase is unavailable. Refresh and try again.";
           return;
         }
-        const { data, error } = await window.supabaseClient.functions.invoke("github-publish", {
-          body: { projectName, files: { "index.html": files.html, "styles.css": files.css, "script.js": files.js } }
-        });
-        if (error?.context?.status === 401 || error?.status === 401) {
-          const returnTo = `${window.location.origin}/create/?github=authorized`;
-          window.location.href = `https://svjbtfhbwpavpvrjfbbe.supabase.co/functions/v1/github-publish?action=login&return_to=${encodeURIComponent(returnTo)}`;
-          return;
+        const publishButton = document.querySelector("#publish-project");
+        publishButton.disabled = true;
+        status.textContent = "Connecting to GitHub…";
+        try {
+          const { data, error } = await window.supabaseClient.functions.invoke("github-publish", {
+            body: { projectName, files: { "index.html": files.html, "styles.css": files.css, "script.js": files.js } }
+          });
+          if (error?.context?.status === 401 || error?.status === 401) {
+            const returnTo = `${window.location.origin}/create/?github=authorized`;
+            window.location.href = `https://svjbtfhbwpavpvrjfbbe.supabase.co/functions/v1/github-publish?action=login&return_to=${encodeURIComponent(returnTo)}`;
+            return;
+          }
+          if (error) {
+            status.textContent = error.message || "GitHub upload failed.";
+            return;
+          }
+          status.textContent = `Published to ${data.path}`;
+        } catch (error) {
+          console.error("GitHub publish request failed", error);
+          status.textContent = "Could not reach the Edge Function. Check the deployed function and browser network connection.";
+        } finally {
+          publishButton.disabled = false;
         }
-        if (error) {
-          status.textContent = error.message || "GitHub upload failed.";
-          return;
-        }
-        status.textContent = `Published to ${data.path}`;
       };
       document.querySelector("#publish-project").addEventListener("click", publishProject);
       document.querySelector("#upload-project").addEventListener("change", async (event) => {
