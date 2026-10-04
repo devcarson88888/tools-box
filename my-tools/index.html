@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="View and manage your published tools." />
+    <title>My tools — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .my-tools-page { min-height: 620px; padding: 45px 3.1vw 90px; }
+      .my-tools-heading { align-items: end; display: flex; justify-content: space-between; margin-bottom: 30px; }
+      .my-tools-heading h1 { font-size: clamp(42px, 5vw, 66px); line-height: .95; margin: 18px 0 0; }
+      .my-tools-heading h1 em { color: #a59ca9; font-style: normal; }
+      .my-tools-grid { display: grid; gap: 14px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .my-tool-card { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
+      .my-tool-card h2 { font: 600 21px "Space Grotesk", sans-serif; letter-spacing: -1px; margin: 0; }
+      .my-tool-path { color: var(--muted); display: block; font: 11px Consolas, monospace; margin: 7px 0 16px; }
+      .my-tool-card label { display: block; font-size: 10px; font-weight: 700; margin-bottom: 7px; }
+      .my-tool-card textarea { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; color: var(--ink); font: 12px/1.5 "DM Sans", sans-serif; min-height: 78px; padding: 10px; resize: vertical; width: 100%; }
+      .my-tool-card-actions { align-items: center; display: flex; gap: 12px; justify-content: space-between; margin-top: 12px; }
+      .my-tool-card-actions .button { padding: 10px 13px; }
+      .my-tool-message, .my-tools-status { color: var(--muted); font-size: 11px; }
+      .my-tools-status { margin: 0; }
+      .my-tools-empty { background: #fff; border-radius: 12px; color: var(--muted); line-height: 1.7; padding: 28px; }
+      .my-tools-empty a { color: var(--ink); font-weight: 700; text-decoration: underline; }
+      @media (max-width: 700px) {
+        .my-tools-grid { grid-template-columns: 1fr; }
+        .my-tools-heading { align-items: flex-start; flex-direction: column; gap: 15px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <a class="auth-home-link" href="/search/">← All tools</a>
+      </nav>
+      <main class="my-tools-page">
+        <header class="my-tools-heading">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Creator dashboard</div>
+            <h1>My <em>tools.</em></h1>
+          </div>
+          <p class="my-tools-status" id="my-tools-status" aria-live="polite">Checking GitHub authorization…</p>
+        </header>
+        <div class="my-tools-grid" id="my-tools-list"></div>
+      </main>
+      <footer class="footer">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../script.js?v=20260914-auth"></script>
+    <script>
+      const endpoint = "https://svjbtfhbwpavpvrjfbbe.supabase.co/functions/v1/github-publish";
+      const status = document.querySelector("#my-tools-status");
+      const list = document.querySelector("#my-tools-list");
+      const authorize = () => {
+        const returnTo = `${window.location.origin}/my-tools/?github=authorized`;
+        window.location.href = `${endpoint}?action=login&return_to=${encodeURIComponent(returnTo)}`;
+      };
+      const createCard = (tool) => {
+        const card = document.createElement("article");
+        card.className = "my-tool-card";
+        const title = document.createElement("h2");
+        title.textContent = tool.name;
+        const path = document.createElement("a");
+        path.className = "my-tool-path";
+        path.href = tool.url;
+        path.textContent = `create/${tool.name}/`;
+        path.target = "_blank";
+        path.rel = "noopener";
+        const label = document.createElement("label");
+        label.textContent = "Description";
+        const description = document.createElement("textarea");
+        description.maxLength = 280;
+        description.value = tool.description || "";
+        const actions = document.createElement("div");
+        actions.className = "my-tool-card-actions";
+        const message = document.createElement("span");
+        message.className = "my-tool-message";
+        const save = document.createElement("button");
+        save.className = "button button-dark";
+        save.type = "button";
+        save.textContent = "Save description";
+        save.addEventListener("click", async () => {
+          const text = description.value.trim();
+          if (!text) {
+            message.textContent = "Enter a description first.";
+            return;
+          }
+          save.disabled = true;
+          message.textContent = "Saving…";
+          try {
+            const { error } = await window.supabaseClient.functions.invoke("github-publish", {
+              body: { action: "update-description", projectName: tool.name, description: text }
+            });
+            if (error) throw error;
+            message.textContent = "Description saved.";
+          } catch (error) {
+            message.textContent = error.message || "Could not save the description.";
+          } finally {
+            save.disabled = false;
+          }
+        });
+        actions.append(message, save);
+        card.append(title, path, label, description, actions);
+        return card;
+      };
+      const loadTools = async () => {
+        if (!window.supabaseClient) {
+          status.textContent = "Supabase is unavailable. Refresh this page.";
+          return;
+        }
+        try {
+          const { data, error } = await window.supabaseClient.functions.invoke("github-publish", {
+            body: { action: "my-tools" }
+          });
+          if (error?.context?.status === 401 || error?.status === 401) {
+            if (isOAuthReturn) {
+              status.textContent = "GitHub authorization was not received. Try again.";
+            } else {
+              authorize();
+            }
+            return;
+          }
+          if (error) throw error;
+          const tools = data.tools || [];
+          status.textContent = `${tools.length} published ${tools.length === 1 ? "tool" : "tools"}`;
+          if (!tools.length) {
+            list.innerHTML = '<p class="my-tools-empty">You have not published any tools yet. <a href="/create/">Create your first tool</a>.</p>';
+            return;
+          }
+          list.replaceChildren(...tools.map(createCard));
+        } catch (error) {
+          status.textContent = error.message || "Could not load your tools.";
+        }
+      };
+      const isOAuthReturn = new URLSearchParams(window.location.search).has("github");
+      if (isOAuthReturn) window.history.replaceState({}, "", "/my-tools/");
+      loadTools();
+    </script>
+  </body>
+</html>

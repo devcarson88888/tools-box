@@ -1,5 +1,6 @@
 const owner = Deno.env.get("GITHUB_REPO_OWNER") || "devcarson88888";
 const repo = Deno.env.get("GITHUB_REPO_NAME") || "tools-box";
+const allowedPublisher = Deno.env.get("GITHUB_ALLOWED_PUBLISHER") || owner;
 const clientId = Deno.env.get("GITHUB_CLIENT_ID") || "";
 const clientSecret = Deno.env.get("GITHUB_CLIENT_SECRET") || "";
 const defaultOrigin = "https://tools-box-639.pages.dev";
@@ -45,19 +46,102 @@ const safeProjectName = (value: unknown) => {
   return /^[a-z0-9][a-z0-9-]{0,49}$/.test(name) ? name : null;
 };
 
+const cleanDescription = (value: unknown) => {
+  if (typeof value !== "string") return null;
+  const description = value.trim();
+  return description.length > 0 && description.length <= 280 ? description : null;
+};
+
+const attachProjectAssets = (html: string, hasCss: boolean, hasJs: boolean) => {
+  let output = html;
+  if (hasCss && !/<link\b[^>]*href=["'][^"']*styles\.css(?:[?#][^"']*)?["']/i.test(output)) {
+    const link = '<link rel="stylesheet" href="./styles.css">';
+    output = /<\/head>/i.test(output) ? output.replace(/<\/head>/i, `${link}</head>`) : `${link}\n${output}`;
+  }
+  if (hasJs && !/<script\b[^>]*src=["'][^"']*script\.js(?:[?#][^"']*)?["']/i.test(output)) {
+    const script = '<script src="./script.js" defer></script>';
+    output = /<\/body>/i.test(output) ? output.replace(/<\/body>/i, `${script}</body>`) : `${output}\n${script}`;
+  }
+  return output;
+};
+
 const encodeBase64 = (value: string) =>
-  btoa(String.fromCharCode(...new TextEncoder().encode(value)));
+  (() => {
+    const bytes = new TextEncoder().encode(value);
+    let binary = "";
+    for (let offset = 0; offset < bytes.length; offset += 0x8000) {
+      binary += String.fromCharCode(...bytes.subarray(offset, offset + 0x8000));
+    }
+    return btoa(binary);
+  })();
+
+const decodeBase64 = (value: string) =>
+  new TextDecoder().decode(Uint8Array.from(atob(value), (character) => character.charCodeAt(0)));
+
+type PublishedTool = { name: string; description: string; createdBy: string; url: string };
 
 const github = async (path: string, init: RequestInit, token: string) =>
   fetch(`https://api.github.com${path}`, {
     ...init,
     headers: {
       Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${token}`,
       "X-GitHub-Api-Version": "2022-11-28",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(init.headers || {})
     }
   });
+
+const getGithubUser = async (token: string) => {
+  const response = await github("/user", { method: "GET" }, token);
+  if (!response.ok) return null;
+  return await response.json();
+};
+
+const readToolMetadata = async (project: string): Promise<PublishedTool | null> => {
+  const response = await fetch(`https://raw.githubusercontent.com/${owner}/${repo}/main/create/${project}/tool.json`);
+  if (!response.ok) {
+    if (response.status === 404) return { name: project, description: "", createdBy: owner, url: `/create/${project}/` };
+    return null;
+  }
+  try {
+    const metadata = await response.json();
+    return {
+      name: project,
+      description: typeof metadata.description === "string" ? metadata.description : "",
+      createdBy: typeof metadata.createdBy === "string" ? metadata.createdBy : "",
+      url: `/create/${project}/`
+    };
+  } catch {
+    return null;
+  }
+};
+
+const listTools = async (): Promise<PublishedTool[] | null> => {
+  const response = await github(`/repos/${owner}/${repo}/git/trees/main?recursive=1`, { method: "GET" }, "");
+  if (!response.ok) return null;
+  const tree = await response.json();
+  const projects = new Set<string>();
+  for (const item of tree.tree || []) {
+    const match = /^create\/([a-z0-9][a-z0-9-]{0,49})\/index\.html$/.exec(item.path);
+    if (match) projects.add(match[1]);
+  }
+  const tools = await Promise.all([...projects].map(readToolMetadata));
+  return tools.filter((tool): tool is PublishedTool => tool !== null);
+};
+
+const putFile = async (path: string, content: string, message: string, token: string) => {
+  const existing = await github(path, { method: "GET" }, token);
+  const existingData = existing.ok ? await existing.json() : null;
+  return await github(path, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message,
+      content: encodeBase64(content),
+      ...(existingData?.sha ? { sha: existingData.sha } : {})
+    })
+  }, token);
+};
 
 Deno.serve(async (request) => {
   const origin = getOrigin(request);
@@ -102,33 +186,112 @@ Deno.serve(async (request) => {
   }
 
   if (request.method !== "POST") return json({ error: "Use POST to publish." }, 405, origin);
+  const body = await request.json().catch(() => null);
+  const requestedAction = body?.action || "publish";
+
+  if (requestedAction === "tools") {
+    const tools = await listTools();
+    return tools ? json({ tools }, 200, origin) : json({ error: "Unable to load published tools." }, 502, origin);
+  }
+
   const token = parseCookies(request).github_access_token;
   if (!token) return json({ error: "Authorize GitHub before publishing." }, 401, origin);
-  const body = await request.json().catch(() => null);
-  const project = safeProjectName(body?.projectName);
-  if (!project) return json({ error: "Project name must use lowercase letters, numbers, and hyphens." }, 400, origin);
-  const files = body?.files;
-  if (!files || typeof files !== "object") return json({ error: "No staged files were provided." }, 400, origin);
-  if (typeof files["index.html"] !== "string") return json({ error: "index.html is required before publishing." }, 400, origin);
+  const user = await getGithubUser(token);
+  if (!user?.login) return json({ error: "GitHub authorization expired. Please authorize again." }, 401, origin);
 
-  for (const fileName of ["index.html", "styles.css", "script.js"]) {
-    if (typeof files[fileName] !== "string") continue;
-    const path = `/repos/${owner}/${repo}/contents/create/${project}/${fileName}`;
-    const existing = await github(path, { method: "GET" }, token);
-    const existingData = existing.ok ? await existing.json() : null;
-    const response = await github(path, {
+  if (requestedAction === "my-tools") {
+    if (user.login.toLowerCase() !== allowedPublisher.toLowerCase()) {
+      return json({ error: "Only the repository owner can manage published tools." }, 403, origin);
+    }
+    const tools = await listTools();
+    return tools
+      ? json({ tools: tools.filter((tool) => tool.createdBy.toLowerCase() === user.login.toLowerCase()) }, 200, origin)
+      : json({ error: "Unable to load your tools." }, 502, origin);
+  }
+
+  if (requestedAction === "update-description") {
+    if (user.login.toLowerCase() !== allowedPublisher.toLowerCase()) {
+      return json({ error: "Only the repository owner can manage published tools." }, 403, origin);
+    }
+    const project = safeProjectName(body?.projectName);
+    const description = cleanDescription(body?.description);
+    if (!project || !description) return json({ error: "Use a valid project name and a description up to 280 characters." }, 400, origin);
+    const metadataPath = `/repos/${owner}/${repo}/contents/create/${project}/tool.json`;
+    const existing = await github(metadataPath, { method: "GET" }, token);
+    let metadata: Record<string, string>;
+    let existingSha: string | undefined;
+    if (existing.ok) {
+      const current = await existing.json();
+      existingSha = current.sha;
+      try {
+        metadata = JSON.parse(decodeBase64(current.content));
+      } catch {
+        return json({ error: "This tool's metadata is invalid." }, 500, origin);
+      }
+    } else if (existing.status === 404) {
+      const indexResponse = await github(`/repos/${owner}/${repo}/contents/create/${project}/index.html`, { method: "GET" }, token);
+      if (!indexResponse.ok) return json({ error: "Could not find this published tool." }, indexResponse.status, origin);
+      metadata = { name: project, createdBy: user.login };
+    } else {
+      return json({ error: "Could not read this tool's metadata." }, existing.status, origin);
+    }
+    const updated = await github(metadataPath, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        message: `Publish ${project}/${fileName}`,
-        content: encodeBase64(files[fileName]),
-        ...(existingData?.sha ? { sha: existingData.sha } : {})
+        message: `Update ${project} description`,
+        content: encodeBase64(JSON.stringify({ ...metadata, description }, null, 2)),
+        ...(existingSha ? { sha: existingSha } : {})
       })
     }, token);
+    if (!updated.ok) {
+      const githubError = await updated.json().catch(() => null);
+      return json({ error: githubError?.message || "Unable to save the description." }, updated.status, origin);
+    }
+    return json({ ok: true }, 200, origin);
+  }
+
+  const project = safeProjectName(body?.projectName);
+  if (!project) return json({ error: "Project name must use lowercase letters, numbers, and hyphens." }, 400, origin);
+  if (user.login.toLowerCase() !== allowedPublisher.toLowerCase()) {
+    return json({ error: "Only the repository owner can publish tools to this website." }, 403, origin);
+  }
+  const files = body?.files;
+  if (!files || typeof files !== "object") return json({ error: "No staged files were provided." }, 400, origin);
+  if (typeof files["index.html"] !== "string") return json({ error: "index.html is required before publishing." }, 400, origin);
+  const description = cleanDescription(body.description);
+  if (!description) return json({ error: "Add a description of up to 280 characters." }, 400, origin);
+
+  const publishableFiles: Record<string, string> = {};
+  for (const fileName of ["index.html", "styles.css", "script.js"]) {
+    if (typeof files[fileName] === "string") publishableFiles[fileName] = files[fileName];
+  }
+  publishableFiles["index.html"] = attachProjectAssets(
+    publishableFiles["index.html"],
+    typeof files["styles.css"] === "string",
+    typeof files["script.js"] === "string"
+  );
+  const totalBytes = Object.values(publishableFiles).reduce((sum, content) => sum + new TextEncoder().encode(content).byteLength, 0);
+  if (totalBytes > 1_000_000) return json({ error: "The combined project files must be smaller than 1 MB." }, 413, origin);
+  for (const [fileName, content] of Object.entries(publishableFiles)) {
+    const path = `/repos/${owner}/${repo}/contents/create/${project}/${fileName}`;
+    const response = await putFile(path, content, `Publish ${project}/${fileName}`, token);
     if (!response.ok) {
       const githubError = await response.json().catch(() => null);
       return json({ error: githubError?.message || `GitHub rejected ${fileName}.` }, response.status, origin);
     }
+  }
+
+  const metadataPath = `/repos/${owner}/${repo}/contents/create/${project}/tool.json`;
+  const metadataResponse = await putFile(
+    metadataPath,
+    JSON.stringify({ name: project, description, createdBy: user.login }, null, 2),
+    `Update ${project} description`,
+    token
+  );
+  if (!metadataResponse.ok) {
+    const githubError = await metadataResponse.json().catch(() => null);
+    return json({ error: githubError?.message || "GitHub rejected tool metadata." }, metadataResponse.status, origin);
   }
   return json({ ok: true, path: `create/${project}/` }, 200, origin);
 });

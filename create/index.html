@@ -19,6 +19,7 @@
       .builder-top h1 em { color: #a59ca9; font-style: normal; }
       .builder-actions { align-items: center; display: flex; gap: 12px; }
       .project-name { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: 600 12px "DM Sans", sans-serif; padding: 12px; width: 170px; }
+      .project-description { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; color: var(--ink); display: block; font: 12px "DM Sans", sans-serif; margin: 16px 3.1vw 0; min-height: 70px; padding: 12px; resize: vertical; width: calc(100% - 6.2vw); }
       .builder-actions .button { padding: 13px 18px; }
       .builder-workspace { background: #fff; border: 1px solid var(--line); border-radius: 15px; display: grid; grid-template-columns: 185px minmax(300px, 1fr) minmax(300px, 1fr); min-height: 610px; overflow: hidden; }
       .staging-area { background: var(--paper); border-right: 1px solid var(--line); padding: 24px 14px; }
@@ -88,8 +89,10 @@
           <div class="builder-actions">
             <input class="project-name" id="project-name" value="my-tool" pattern="[a-z0-9][a-z0-9-]*" aria-label="GitHub project name" />
             <button class="button button-dark" id="start-project" type="button">Start <span aria-hidden="true">▶</span></button>
+            <a class="button button-light" href="/my-tools/">My tools <span aria-hidden="true">→</span></a>
           </div>
         </header>
+        <textarea class="project-description" id="project-description" maxlength="280" placeholder="Describe what your tool does (required to publish)." aria-label="Tool description"></textarea>
 
         <section class="builder-workspace" aria-label="Temporary project workspace">
           <aside class="staging-area">
@@ -123,6 +126,7 @@
 
         <footer class="builder-bottom">
           <p class="builder-status" id="builder-status" aria-live="polite"></p>
+          <p class="create-note">Publishing is restricted to the repository owner. Visitors cannot add tools.</p>
           <div class="bottom-actions">
             <input class="hidden-input" id="upload-project" type="file" accept=".html,.css,.js" multiple />
             <button class="button button-light" id="upload-button" type="button">Import <span aria-hidden="true">↑</span></button>
@@ -204,8 +208,17 @@
       const publishProject = async () => {
         saveStagingArea();
         const projectName = document.querySelector("#project-name").value.trim().toLowerCase();
+        const description = document.querySelector("#project-description").value.trim();
+        if (files.html === undefined) {
+          status.textContent = "Add index.html to the staging area before publishing.";
+          return;
+        }
         if (!/^[a-z0-9][a-z0-9-]{0,49}$/.test(projectName)) {
           status.textContent = "Use 1–50 lowercase letters, numbers, or hyphens for the project name.";
+          return;
+        }
+        if (!description || description.length > 280) {
+          status.textContent = "Add a short description (1–280 characters) before publishing.";
           return;
         }
         if (!window.supabaseClient) {
@@ -217,7 +230,7 @@
         status.textContent = "Connecting to GitHub…";
         try {
           const { data, error } = await window.supabaseClient.functions.invoke("github-publish", {
-            body: { projectName, files: { "index.html": files.html, "styles.css": files.css, "script.js": files.js } }
+            body: { projectName, description, files: { "index.html": files.html, "styles.css": files.css, "script.js": files.js } }
           });
           if (error?.context?.status === 401 || error?.status === 401) {
             const returnTo = `${window.location.origin}/create/?github=authorized`;

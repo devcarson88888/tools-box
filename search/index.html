@@ -60,7 +60,10 @@
             </div>
             <div class="search-heading-actions">
               <p data-i18n="searchDescription">Search by tool name, category, or what you need to get done.</p>
-              <a class="button button-dark button-small" href="/create/">Create <span aria-hidden="true">＋</span></a>
+              <div class="search-page-actions">
+                <a class="button button-dark button-small" href="/create/">Create <span aria-hidden="true">＋</span></a>
+                <a class="button button-light button-small" href="/my-tools/">View my tools <span aria-hidden="true">→</span></a>
+              </div>
             </div>
           </div>
           <form class="search-form" id="tool-search-form" role="search">
@@ -70,6 +73,16 @@
           </form>
           <p class="search-status" id="search-status" aria-live="polite"></p>
           <div class="search-results" id="search-results"></div>
+          <section class="published-tools-section" aria-labelledby="published-tools-title">
+            <div class="section-heading">
+              <div>
+                <div class="eyebrow"><span class="eyebrow-dot"></span> Published projects</div>
+                <h2 id="published-tools-title">All tools</h2>
+              </div>
+              <span class="current-file" id="published-tools-status" aria-live="polite">Loading tools…</span>
+            </div>
+            <div class="search-results" id="published-tools"></div>
+          </section>
         </section>
       </main>
 
@@ -81,5 +94,38 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="../script.js?v=20260914-auth"></script>
+    <script>
+      const publishedTools = document.querySelector("#published-tools");
+      const publishedStatus = document.querySelector("#published-tools-status");
+      const searchInput = document.querySelector("#tool-search");
+      let publishedToolData = [];
+      const escapeText = (value) => {
+        const element = document.createElement("span");
+        element.textContent = value;
+        return element.innerHTML;
+      };
+      const renderPublishedTools = () => {
+        const query = searchInput.value.trim().toLowerCase();
+        const tools = publishedToolData.filter((tool) => `${tool.name} ${tool.description}`.toLowerCase().includes(query));
+        publishedTools.innerHTML = tools.length
+          ? tools.map((tool) => `<a class="search-result card-lilac" href="${tool.url}"><span class="tool-icon">↗</span><span><h3>${escapeText(tool.name)}</h3><p>${escapeText(tool.description || "No description provided.")}</p></span></a>`).join("")
+          : '<p class="search-empty">No published tools match this search.</p>';
+      };
+      const loadPublishedTools = async () => {
+        try {
+          const { data, error } = await window.supabaseClient.functions.invoke("github-publish", { body: { action: "tools" } });
+          if (error) throw error;
+          publishedToolData = data.tools || [];
+          publishedStatus.textContent = `${publishedToolData.length} tools`;
+          renderPublishedTools();
+        } catch (error) {
+          console.error("Unable to load published tools", error);
+          publishedStatus.textContent = "Could not load tools.";
+          publishedTools.innerHTML = '<p class="search-empty">Published tools are temporarily unavailable.</p>';
+        }
+      };
+      searchInput.addEventListener("input", renderPublishedTools);
+      loadPublishedTools();
+    </script>
   </body>
 </html>
