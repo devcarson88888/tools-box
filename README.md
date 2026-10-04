@@ -15,6 +15,12 @@ The Worker serves this repository's static files directly; `.assetsignore` preve
 
 Workers deployment requires Cloudflare account access and is not performed automatically by GitHub pushes. Re-running `npx wrangler deploy` publishes the current working tree.
 
+## Admin console
+
+The private account console is at `/admin/`. Its Edge Function verifies the signed-in Supabase user and requires an explicit `ADMIN_EMAILS` and/or `ADMIN_USER_IDS` secret; it never trusts a user-supplied name or browser-provided role. Add the exact administrator email in Supabase Edge Function secrets as `ADMIN_EMAILS` (multiple emails may be comma-separated). Do not commit or paste service keys into the static site.
+
+Deploy `supabase/functions/admin/index.ts` as the `admin` Edge Function, then sign in on the site with an allowlisted account and open `/admin/`. The console shows email, display name, signup time, email-confirmation state and last sign-in, and can suspend sign-in for 100 years or restore it. It does not expose passwords or birth dates, delete accounts, or allow an admin to suspend their own account or another allowlisted administrator. An account must be able to sign in before it can use the console.
+
 ## Signup age check and publisher moderation
 
 Before deploying the updated Edge Function:

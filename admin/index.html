@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="description" content="Private Useful Tools Box account administration." />
+    <title>Admin — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+    <style>
+      .admin-main { min-height: 72vh; padding: 45px 3.1vw 80px; }
+      .admin-header { align-items: end; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin-bottom: 28px; }
+      .admin-header h1 { font-size: clamp(40px, 5vw, 62px); line-height: 1; margin: 16px 0 8px; }
+      .admin-header h1 em { color: #a59ca9; font-style: normal; }
+      .admin-subtitle,.admin-note,.admin-status { color: var(--muted); font-size: 12px; line-height: 1.65; }
+      .admin-tools { align-items: center; display: flex; flex-wrap: wrap; gap: 9px; }
+      .admin-search { background: #fff; border: 1px solid var(--line); border-radius: 8px; color: var(--ink); font: 13px "DM Sans", sans-serif; min-height: 42px; padding: 0 13px; width: min(310px, 70vw); }
+      .admin-tools .button { border: 0; cursor: pointer; min-height: 42px; padding: 10px 15px; }
+      .admin-note { background: #fff5dd; border: 1px solid #efdfb8; border-radius: 9px; margin: 0 0 18px; padding: 13px 16px; }
+      .admin-status { min-height: 23px; margin: 0 0 12px; }
+      .admin-table-wrap { background: #fff; border: 1px solid var(--line); border-radius: 12px; overflow-x: auto; }
+      .admin-table { border-collapse: collapse; min-width: 780px; width: 100%; }
+      .admin-table th,.admin-table td { border-bottom: 1px solid var(--line); padding: 14px 15px; text-align: left; vertical-align: middle; }
+      .admin-table th { color: var(--muted); font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
+      .admin-table td { font-size: 12px; }
+      .admin-table tbody tr:last-child td { border-bottom: 0; }
+      .admin-email { font-weight: 700; overflow-wrap: anywhere; }
+      .admin-name { color: var(--muted); display: block; font-size: 10px; margin-top: 4px; }
+      .admin-badge { border-radius: 20px; display: inline-block; font-size: 10px; font-weight: 700; padding: 5px 9px; white-space: nowrap; }
+      .badge-confirmed,.badge-active { background: #eaf2d6; color: #536827; }
+      .badge-pending,.badge-suspended { background: #fff0da; color: #89591d; }
+      .admin-action { background: transparent; border: 1px solid var(--line); border-radius: 7px; color: var(--ink); cursor: pointer; font: 700 11px "DM Sans",sans-serif; padding: 8px 10px; white-space: nowrap; }
+      .admin-action:hover { border-color: #cf8b7a; }
+      .admin-action:disabled,.admin-tools button:disabled { cursor: wait; opacity: .55; }
+      .admin-pagination { align-items: center; display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
+      .admin-pagination button { background: #fff; border: 1px solid var(--line); border-radius: 7px; cursor: pointer; padding: 9px 12px; }
+      .admin-pagination button:disabled { cursor: default; opacity: .45; }
+      .admin-empty { color: var(--muted); padding: 25px; text-align: center; }
+      .admin-hidden { display: none !important; }
+      @media(max-width:650px) { .admin-main { padding: 35px 5px 60px; }.admin-header { align-items: flex-start; flex-direction: column; }.admin-tools { width: 100%; }.admin-search { flex: 1; width: auto; } }
+    </style>
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <a class="auth-home-link" href="/">返回首页</a>
+      </nav>
+      <main class="admin-main">
+        <header class="admin-header">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> Private account console / 管理员控制台</div>
+            <h1>Account <em>admin.</em></h1>
+            <p class="admin-subtitle">查看账号、确认邮箱状态、暂停或恢复登录。<br />Search accounts, check email status, suspend or restore sign-in.</p>
+          </div>
+          <div class="admin-tools admin-hidden" id="admin-tools">
+            <input class="admin-search" id="admin-search" type="search" placeholder="搜索邮箱或用户名 / Search accounts" />
+            <button class="button button-dark" id="admin-refresh" type="button">刷新 / Refresh</button>
+          </div>
+        </header>
+        <p class="admin-note">安全提示：只有在 Supabase `ADMIN_EMAILS` / `ADMIN_USER_IDS` 中明确授权的账号才能查看此列表。注册时填写 “admin” 不会获得权限。此页面不显示密码或生日，也不能删除账号。</p>
+        <p class="admin-status" id="admin-status" role="status" aria-live="polite">正在检查登录状态…… / Checking sign-in…</p>
+        <div class="admin-table-wrap admin-hidden" id="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr><th>账号 / Account</th><th>注册时间 / Created</th><th>邮箱 / Email</th><th>登录 / Sign-in</th><th>最近登录 / Last sign-in</th><th>操作 / Action</th></tr>
+            </thead>
+            <tbody id="admin-users"></tbody>
+          </table>
+          <p class="admin-empty admin-hidden" id="admin-empty">这一页没有匹配的账号。 / No accounts match this page.</p>
+        </div>
+        <nav class="admin-pagination admin-hidden" id="admin-pagination" aria-label="Account pages">
+          <button type="button" id="admin-previous">上一页 / Previous</button>
+          <span class="admin-status" id="admin-page-label"></span>
+          <button type="button" id="admin-next">下一页 / Next</button>
+        </nav>
+        <div class="admin-note admin-hidden" id="admin-signin">
+          请先用已授权的管理员账号登录，然后再打开此页面。
+          <a href="/login/" style="font-weight:700;text-decoration:underline">前往登录 / Sign in</a>
+        </div>
+      </main>
+      <footer class="footer">
+        <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../script.js?v=20261004-workers-auth"></script>
+    <script>
+      (() => {
+        const client = window.supabaseClient;
+        const status = document.querySelector("#admin-status");
+        const tools = document.querySelector("#admin-tools");
+        const tableWrap = document.querySelector("#admin-table-wrap");
+        const body = document.querySelector("#admin-users");
+        const empty = document.querySelector("#admin-empty");
+        const pagination = document.querySelector("#admin-pagination");
+        const search = document.querySelector("#admin-search");
+        const pageLabel = document.querySelector("#admin-page-label");
+        const previous = document.querySelector("#admin-previous");
+        const next = document.querySelector("#admin-next");
+        const pageSize = 50;
+        let page = 1;
+        let pageUsers = [];
+        let visibleCount = 0;
+
+        const displayDate = (value) => {
+          if (!value) return "—";
+          const date = new Date(value);
+          return Number.isNaN(date.getTime()) ? "—" : date.toLocaleString();
+        };
+
+        const invokeAdmin = async (payload) => {
+          const { data, error } = await client.functions.invoke("admin", { body: payload });
+          if (error) {
+            let message = error.message || "请求失败 / Request failed.";
+            try {
+              const detail = await error.context?.json();
+              if (detail?.error) message = detail.error;
+            } catch { /* Keep the SDK error if no JSON response is available. */ }
+            throw new Error(message);
+          }
+          return data;
+        };
+
+        const renderRows = () => {
+          const query = search.value.trim().toLocaleLowerCase();
+          const filtered = pageUsers.filter((user) =>
+            `${user.email || ""} ${user.name || ""}`.toLocaleLowerCase().includes(query)
+          );
+          visibleCount = filtered.length;
+          empty.classList.toggle("admin-hidden", visibleCount !== 0);
+          body.replaceChildren();
+          for (const user of filtered) {
+            const row = document.createElement("tr");
+            const accountCell = document.createElement("td");
+            const email = document.createElement("span");
+            email.className = "admin-email";
+            email.textContent = user.email || "(无邮箱 / no email)";
+            accountCell.append(email);
+            if (user.name) {
+              const name = document.createElement("span");
+              name.className = "admin-name";
+              name.textContent = user.name;
+              accountCell.append(name);
+            }
+            const created = document.createElement("td");
+            created.textContent = displayDate(user.createdAt);
+            const emailCell = document.createElement("td");
+            const confirmed = Boolean(user.emailConfirmedAt);
+            const emailBadge = document.createElement("span");
+            emailBadge.className = `admin-badge ${confirmed ? "badge-confirmed" : "badge-pending"}`;
+            emailBadge.textContent = confirmed ? "已确认 / Confirmed" : "待确认 / Pending";
+            emailCell.append(emailBadge);
+            const signInCell = document.createElement("td");
+            const isSuspended = user.bannedUntil && new Date(user.bannedUntil) > new Date();
+            const signInBadge = document.createElement("span");
+            signInBadge.className = `admin-badge ${isSuspended ? "badge-suspended" : "badge-active"}`;
+            signInBadge.textContent = isSuspended ? "暂停 / Suspended" : "正常 / Active";
+            signInCell.append(signInBadge);
+            const lastSignIn = document.createElement("td");
+            lastSignIn.textContent = displayDate(user.lastSignInAt);
+            const actionCell = document.createElement("td");
+            const action = document.createElement("button");
+            action.className = "admin-action";
+            action.type = "button";
+            action.disabled = user.id === currentUserId;
+            action.textContent = user.id === currentUserId
+              ? "当前管理员 / Admin"
+              : isSuspended ? "恢复登录 / Restore" : "暂停 100 年 / Suspend 100y";
+            action.addEventListener("click", async () => {
+              const suspend = !isSuspended;
+              const prompt = suspend
+                ? `确定暂停 ${user.email || "该账号"} 的登录 100 年吗？\nSuspend sign-in for this account for 100 years?`
+                : `确定恢复 ${user.email || "该账号"} 的登录吗？\nRestore sign-in for this account?`;
+              if (!window.confirm(prompt)) return;
+              action.disabled = true;
+              try {
+                await invokeAdmin({ action: "set-signin-suspension", userId: user.id, suspend });
+                await loadUsers();
+              } catch (error) {
+                status.textContent = error.message;
+                action.disabled = false;
+              }
+            });
+            actionCell.append(action);
+            row.append(accountCell, created, emailCell, signInCell, lastSignIn, actionCell);
+            body.append(row);
+          }
+          pageLabel.textContent = `第 ${page} 页 / Page ${page} · ${visibleCount} 条显示 / shown`;
+          previous.disabled = page <= 1;
+          next.disabled = pageUsers.length < pageSize;
+        };
+
+        let currentUserId = "";
+        const loadUsers = async () => {
+          status.textContent = "正在读取账号…… / Loading accounts…";
+          try {
+            const result = await invokeAdmin({ action: "list-users", page });
+            pageUsers = result.users || [];
+            tools.classList.remove("admin-hidden");
+            tableWrap.classList.remove("admin-hidden");
+            pagination.classList.remove("admin-hidden");
+            status.textContent = `第 ${page} 页，${pageUsers.length} 个账号 / Page ${page}, ${pageUsers.length} accounts`;
+            renderRows();
+          } catch (error) {
+            status.textContent = error.message;
+            if (/sign in|sign-in|expired/i.test(error.message)) {
+              document.querySelector("#admin-signin").classList.remove("admin-hidden");
+            }
+          }
+        };
+
+        const start = async () => {
+          if (!client) {
+            status.textContent = "Supabase 暂不可用，请刷新页面。 / Supabase is unavailable. Refresh and try again.";
+            return;
+          }
+          const { data, error } = await client.auth.getUser();
+          if (error || !data.user) {
+            status.textContent = "请先登录管理员账号。 / Sign in with an admin account first.";
+            document.querySelector("#admin-signin").classList.remove("admin-hidden");
+            return;
+          }
+          currentUserId = data.user.id;
+          await loadUsers();
+        };
+
+        search.addEventListener("input", renderRows);
+        document.querySelector("#admin-refresh").addEventListener("click", loadUsers);
+        previous.addEventListener("click", () => { if (page > 1) { page -= 1; loadUsers(); } });
+        next.addEventListener("click", () => { if (pageUsers.length === pageSize) { page += 1; loadUsers(); } });
+        start();
+      })();
+    </script>
+  </body>
+</html>
