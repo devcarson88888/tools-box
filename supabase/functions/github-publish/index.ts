@@ -146,8 +146,23 @@ const putFile = async (path: string, content: string, message: string, token: st
 
 const moderationUrl = Deno.env.get("SUPABASE_URL") || "https://svjbtfhbwpavpvrjfbbe.supabase.co";
 
+const getModerationKey = () => {
+  const legacyKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  if (legacyKey) return legacyKey;
+
+  const secretKeysValue = Deno.env.get("SUPABASE_SECRET_KEYS");
+  if (!secretKeysValue) return null;
+
+  try {
+    const secretKeys = JSON.parse(secretKeysValue);
+    return typeof secretKeys.default === "string" ? secretKeys.default : null;
+  } catch {
+    throw new Error("Supabase secret keys are not valid JSON.");
+  }
+};
+
 const moderationRequest = async (path: string, init: RequestInit = {}) => {
-  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const serviceKey = getModerationKey();
   if (!serviceKey) throw new Error("Publisher moderation storage is not configured.");
   return await fetch(`${moderationUrl}/rest/v1/${path}`, {
     ...init,
