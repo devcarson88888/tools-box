@@ -4,8 +4,9 @@ const allowedPublisher = Deno.env.get("GITHUB_ALLOWED_PUBLISHER") || owner;
 const clientId = Deno.env.get("GITHUB_CLIENT_ID") || "";
 const clientSecret = Deno.env.get("GITHUB_CLIENT_SECRET") || "";
 const defaultOrigin = "https://tools-box-639.pages.dev";
+const appOrigin = (Deno.env.get("TOOLS_BOX_APP_ORIGIN") || defaultOrigin).replace(/\/$/, "");
 const isAllowedOrigin = (origin: string) =>
-  origin === defaultOrigin || /^https:\/\/[a-z0-9-]+\.tools-box-639\.pages\.dev$/.test(origin);
+  origin === defaultOrigin || origin === appOrigin || /^https:\/\/[a-z0-9-]+\.tools-box-639\.pages\.dev$/.test(origin);
 
 const corsHeaders = (origin: string) => ({
   "Access-Control-Allow-Origin": origin,
@@ -18,8 +19,8 @@ const corsHeaders = (origin: string) => ({
 });
 
 const getOrigin = (request: Request) => {
-  const origin = request.headers.get("origin") || defaultOrigin;
-  return isAllowedOrigin(origin) ? origin : defaultOrigin;
+  const origin = request.headers.get("origin") || appOrigin;
+  return isAllowedOrigin(origin) ? origin : appOrigin;
 };
 
 const redirectUri = (request: Request) => {
@@ -204,8 +205,16 @@ Deno.serve(async (request) => {
 
   if (action === "login") {
     if (!clientId || !clientSecret) return json({ error: "GitHub OAuth is not configured." }, 500, origin);
-    const requestedReturnTo = url.searchParams.get("return_to") || `${defaultOrigin}/create/`;
-    const returnTo = requestedReturnTo.startsWith(`${defaultOrigin}/`) ? requestedReturnTo : `${defaultOrigin}/create/`;
+    const requestedReturnTo = url.searchParams.get("return_to") || `${appOrigin}/create/`;
+    let returnTo: string;
+    try {
+      const target = new URL(requestedReturnTo);
+      returnTo = target.origin === defaultOrigin || target.origin === appOrigin
+        ? target.toString()
+        : `${appOrigin}/create/`;
+    } catch {
+      returnTo = `${appOrigin}/create/`;
+    }
     const state = crypto.randomUUID();
     const authUrl = new URL("https://github.com/login/oauth/authorize");
     authUrl.searchParams.set("client_id", clientId);

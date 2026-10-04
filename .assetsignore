@@ -1,0 +1,11 @@
+.git/
+.github/
+.vscode/
+node_modules/
+supabase/
+README.md
+wrangler.json
+worker.js
+.assetsignore
+.env
+.env.*
