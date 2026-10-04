@@ -8,9 +8,10 @@ The Worker serves this repository's static files directly; `.assetsignore` preve
 
 1. Install Node.js, then authenticate Wrangler with `npx wrangler login`.
 2. From the repository root, run `npx wrangler deploy`. Wrangler prints the resulting `workers.dev` URL. Confirm the home page, `/signup/`, `/search/`, `/create/`, `/my-tools/`, `/banned/`, and `/tools/Time-zone-converter/` work before changing production settings.
-3. In Supabase Edge Function secrets, set `TOOLS_BOX_APP_ORIGIN` to the exact new origin, for example `https://useful-tools-box.<your-account-subdomain>.workers.dev`. Keep the existing Pages origin available during the transition. The GitHub OAuth callback remains the Supabase Function URL; it does not move to Workers.
-4. In Supabase Auth URL configuration, add the Workers origin to the allowed redirect URLs and update the Site URL when ready. Signup confirmation redirects use the site's origin.
-5. Verify signup confirmation, Supabase requests, and GitHub publish/manage OAuth flows on Workers. Keep the Pages deployment available until these checks pass.
+3. The `name` in `wrangler.json` must match the Worker name in Cloudflare. The deployed Worker is `tools-box`.
+4. In Supabase Edge Function secrets, set `TOOLS_BOX_APP_ORIGIN` to `https://tools-box.carson88888.workers.dev`. Keep the existing Pages origin available during the transition. The GitHub OAuth callback remains the Supabase Function URL; it does not move to Workers.
+5. In Supabase Auth URL configuration, add the Workers origin to the allowed redirect URLs and update the Site URL when ready. Signup confirmation redirects use the site's origin.
+6. Verify signup confirmation, Supabase requests, and GitHub publish/manage OAuth flows on Workers. Keep the Pages deployment available until these checks pass.
 
 Workers deployment requires Cloudflare account access and is not performed automatically by GitHub pushes. Re-running `npx wrangler deploy` publishes the current working tree.
 

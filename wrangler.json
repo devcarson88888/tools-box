@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/wrangler@4/config-schema.json",
-  "name": "useful-tools-box",
+  "name": "tools-box",
   "main": "worker.js",
   "compatibility_date": "2026-10-04",
   "workers_dev": true,
