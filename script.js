@@ -15,6 +15,45 @@ const tools = [
   { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach" }
 ];
 
+const themeLabels = {
+  en: { dark: "Switch to dark theme", light: "Switch to light theme" },
+  zh: { dark: "切换到深色主题", light: "切换到浅色主题" },
+  es: { dark: "Cambiar al tema oscuro", light: "Cambiar al tema claro" },
+  fr: { dark: "Activer le thème sombre", light: "Activer le thème clair" },
+  de: { dark: "Dunkles Design aktivieren", light: "Helles Design aktivieren" },
+  ja: { dark: "ダークテーマに切り替え", light: "ライトテーマに切り替え" }
+};
+const themeToggleButton = document.createElement("button");
+themeToggleButton.className = "theme-toggle";
+themeToggleButton.type = "button";
+themeToggleButton.innerHTML = '<span class="theme-toggle-icon" aria-hidden="true"></span><span class="sr-only"></span>';
+document.querySelector(".navbar")?.append(themeToggleButton);
+
+function setTheme(theme) {
+  const isDark = theme === "dark";
+  document.documentElement.dataset.theme = isDark ? "dark" : "light";
+  document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+  localStorage.setItem("tools-box-theme", isDark ? "dark" : "light");
+  themeToggleButton.setAttribute("aria-pressed", String(isDark));
+  themeToggleButton.querySelector(".theme-toggle-icon").textContent = isDark ? "☀" : "☾";
+  updateThemeToggleLabel(localStorage.getItem("tools-box-language") || "en");
+}
+
+function updateThemeToggleLabel(language) {
+  if (!themeToggleButton.isConnected) return;
+  const isDark = document.documentElement.dataset.theme === "dark";
+  const label = themeLabels[language] || themeLabels.en;
+  const action = isDark ? label.light : label.dark;
+  themeToggleButton.setAttribute("aria-label", action);
+  themeToggleButton.title = action;
+  themeToggleButton.querySelector(".sr-only").textContent = action;
+}
+
+themeToggleButton.addEventListener("click", () => {
+  setTheme(document.documentElement.dataset.theme === "dark" ? "light" : "dark");
+});
+setTheme(localStorage.getItem("tools-box-theme") === "dark" ? "dark" : "light");
+
 const authFeedback = {
   en: { login: "Unable to sign in. Please check your email and password.", signup: "Unable to create your account. Please try again." },
   zh: { login: "登录失败，请检查邮箱和密码。", signup: "注册失败，请稍后重试。" },
@@ -379,6 +418,7 @@ function setLanguage(language) {
     element.placeholder = copy[element.dataset.i18nPlaceholder];
   });
   if (languageCurrent) languageCurrent.textContent = languageLabels[language] || languageLabels.en;
+  updateThemeToggleLabel(language);
   document.querySelectorAll("[data-language]").forEach((option) => {
     option.setAttribute("aria-selected", String(option.dataset.language === language));
   });

@@ -162,3 +162,74 @@ h1 .title-highlight:after { background: var(--lime); border-radius: 50%; bottom:
   .about-cta h2 { font-size: 34px; }
   .about-cta .button { width: 100%; }
 }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #f2eff8;
+  --muted: #b4aebd;
+  --paper: #17161c;
+  --line: #35323d;
+  --lilac: #3a334d;
+  --peach: #49362f;
+  --sage: #303d31;
+  --cream: #49402d;
+  --navy: #100e1c;
+}
+:root[data-theme="dark"] body { background: var(--paper); color: var(--ink); }
+:root[data-theme="dark"] .navbar,
+:root[data-theme="dark"] .language-menu,
+:root[data-theme="dark"] .floating-card,
+:root[data-theme="dark"] .tool-preview,
+:root[data-theme="dark"] .search-section,
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .about-art-card { background: #23212a; color: var(--ink); }
+:root[data-theme="dark"] .tool-preview { border-color: #23212a; }
+:root[data-theme="dark"] .nav-link,
+:root[data-theme="dark"] .login-link,
+:root[data-theme="dark"] .category-link,
+:root[data-theme="dark"] .category-link span,
+:root[data-theme="dark"] .section-kicker,
+:root[data-theme="dark"] .eyebrow { color: #b4aebd; }
+:root[data-theme="dark"] .nav-link:hover,
+:root[data-theme="dark"] .nav-link.active,
+:root[data-theme="dark"] .login-link:hover,
+:root[data-theme="dark"] .category-link.active { color: var(--ink); }
+:root[data-theme="dark"] .button-dark { background: var(--ink); color: #17161c; }
+:root[data-theme="dark"] .button-light { background: #f2eff8; color: #242126; }
+:root[data-theme="dark"] .about-principle-card p,
+:root[data-theme="dark"] .tool-card p,
+:root[data-theme="dark"] .value-card p { color: #d0cad7; }
+:root[data-theme="dark"] .tool-icon { background: rgba(255,255,255,.12); }
+:root[data-theme="dark"] .why-hero h1 em,
+:root[data-theme="dark"] .why-values h2 em,
+:root[data-theme="dark"] .why-cta h2 em,
+:root[data-theme="dark"] .error-copy h1 em,
+:root[data-theme="dark"] .about-hero h1 em,
+:root[data-theme="dark"] .about-section-heading h2 em,
+:root[data-theme="dark"] .about-cta h2 em,
+:root[data-theme="dark"] .search-heading h2 em,
+:root[data-theme="dark"] .search-page .search-heading h1 em { color: #c7bbdf; }
+:root[data-theme="dark"] .value-number,
+:root[data-theme="dark"] .card-tag,
+:root[data-theme="dark"] .preview-label,
+:root[data-theme="dark"] .preview-menu { color: #c3bdcc; }
+.theme-toggle {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--ink);
+  cursor: pointer;
+  display: inline-flex;
+  flex: 0 0 36px;
+  height: 36px;
+  justify-content: center;
+  padding: 0;
+  transition: background .2s, transform .2s;
+  width: 36px;
+}
+.theme-toggle:hover { background: var(--paper); transform: translateY(-1px); }
+.theme-toggle-icon { font-size: 17px; line-height: 1; }
+.navbar > .theme-toggle { margin-left: 14px; }
+@media (max-width: 850px) {
+  .navbar > .theme-toggle { flex: 0 0 36px; margin-left: 8px; }
+}

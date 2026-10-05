@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="../styles.css" />
+    <link rel="stylesheet" href="../styles.css?v=20261005-dark-theme" />
     <style>
       .admin-main { min-height: 72vh; padding: 45px 3.1vw 80px; }
       .admin-header { align-items: end; display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; margin-bottom: 28px; }
@@ -41,6 +41,10 @@
       .admin-pagination button:disabled { cursor: default; opacity: .45; }
       .admin-empty { color: var(--muted); padding: 25px; text-align: center; }
       .admin-hidden { display: none !important; }
+      :root[data-theme="dark"] .admin-search,
+      :root[data-theme="dark"] .admin-table-wrap,
+      :root[data-theme="dark"] .admin-pagination button { background: #23212a; color: var(--ink); }
+      :root[data-theme="dark"] .admin-note { background: #3a3323; border-color: #5b4c2f; color: #eee0bd; }
       @media(max-width:650px) { .admin-main { padding: 35px 5px 60px; }.admin-header { align-items: flex-start; flex-direction: column; }.admin-tools { width: 100%; }.admin-search { flex: 1; width: auto; } }
     </style>
   </head>
@@ -92,7 +96,7 @@
       </footer>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="../script.js?v=20261005-more-languages"></script>
+    <script src="../script.js?v=20261005-dark-theme"></script>
     <script>
       (() => {
         const client = window.supabaseClient;

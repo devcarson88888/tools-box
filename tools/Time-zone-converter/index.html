@@ -11,7 +11,7 @@
       href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="../../styles.css" />
+    <link rel="stylesheet" href="../../styles.css?v=20261005-dark-theme" />
     <style>
       .tool-page { min-height: 650px; padding: 58px 3.1vw 100px; }
       .tool-page-card { background: #fff; border-radius: 16px; display: grid; gap: 50px; grid-template-columns: 1fr .8fr; margin-top: 22px; padding: clamp(28px, 5vw, 70px); }
@@ -26,6 +26,8 @@
       .converter-result h2 { font-size: 30px; line-height: 1; margin: 18px 0 12px; }
       .converter-result p { color: #6e686c; font-size: 13px; line-height: 1.5; }
       .result-time { color: var(--ink); font: 600 clamp(28px, 4vw, 48px) / 1 "Space Grotesk", sans-serif; letter-spacing: -2px; margin: 45px 0 8px; }
+      :root[data-theme="dark"] .tool-page-card { background: #23212a; }
+      :root[data-theme="dark"] .converter-result p { color: #d0cad7; }
       @media (max-width: 700px) {
         .tool-page-card { grid-template-columns: 1fr; }
         .converter-result { min-height: 220px; }
@@ -78,6 +80,8 @@
         <span>© 2026 tools.box</span>
       </footer>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../script.js?v=20261005-dark-theme"></script>
     <script>
       const zones = [
         ["UTC", "UTC"],
