@@ -9,10 +9,10 @@ const searchResults = document.querySelector("#search-results");
 const searchStatus = document.querySelector("#search-status");
 
 const tools = [
-  { name: "Time zone converter", category: "Productivity", description: "Never miss a beat, wherever you are.", icon: "◷", className: "card-lilac", path: "/tools/Time-zone-converter/" },
-  { name: "Color palette", category: "Creative", description: "Find colors that play well together.", icon: "◉", className: "card-cream", path: "/tools/Color-palette/" },
-  { name: "Text formatter", category: "Everyday", description: "Make every word count beautifully.", icon: "Aa", className: "card-sage", path: "/tools/Text-formatter/" },
-  { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach", path: "/tools/JSON-formatter/" }
+  { name: "Time zone converter", category: "Productivity", description: "Never miss a beat, wherever you are.", icon: "◷", className: "card-lilac", path: "../tools/Time-zone-converter/" },
+  { name: "Color palette", category: "Creative", description: "Find colors that play well together.", icon: "◉", className: "card-cream", path: "../tools/Color-palette/" },
+  { name: "Text formatter", category: "Everyday", description: "Make every word count beautifully.", icon: "Aa", className: "card-sage", path: "../tools/Text-formatter/" },
+  { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach", path: "../tools/JSON-formatter/" }
 ];
 
 const themeLabels = {
