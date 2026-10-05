@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Count words, characters, paragraphs, and reading time with Useful Tools Box." />
+    <title>Word counter — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../styles.css?v=20261005-word-count" />
+    <link rel="stylesheet" href="../tools.css?v=20261005-word-count" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="../../#top" aria-label="Useful Tools Box home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <a class="auth-home-link" href="../../search/">← Back to tools</a>
+      </nav>
+      <main class="standalone-tool">
+        <a class="back-link" href="../../#tools">← All tools</a>
+        <header class="tool-heading">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Everyday tool · counted in your browser</div>
+          <h1>Word <em>counter.</em></h1>
+          <p>Get an instant count of words, characters, sentences, and paragraphs, plus an estimated reading time. Your text stays on your device.</p>
+        </header>
+        <section class="tool-workspace" aria-label="Word and character counter">
+          <label class="tool-field-label" for="counter-input">Your text</label>
+          <textarea class="tool-textarea" id="counter-input" spellcheck="true" placeholder="Type or paste your text here…"></textarea>
+          <div class="tool-metrics word-count-metrics" aria-live="polite" aria-atomic="true">
+            <span><strong id="word-count">0</strong> words</span>
+            <span><strong id="character-count">0</strong> characters</span>
+            <span><strong id="character-no-spaces">0</strong> characters (no spaces)</span>
+            <span><strong id="sentence-count">0</strong> sentences</span>
+            <span><strong id="paragraph-count">0</strong> paragraphs</span>
+            <span><strong id="reading-time">0 min</strong> reading time</span>
+          </div>
+          <div class="tool-toolbar">
+            <button class="tool-button" id="copy-counted-text" type="button">Copy text</button>
+            <button class="tool-button" id="clear-counted-text" type="button">Clear</button>
+          </div>
+          <p class="tool-status" id="counter-status" role="status" aria-live="polite">Counts update as you type. Reading time is estimated at 200 words per minute.</p>
+        </section>
+      </main>
+      <footer class="footer"><a class="brand" href="../../"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a><span>© 2026 tools.box</span></footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../script.js?v=20261005-word-count"></script>
+    <script src="app.js?v=20261005-word-count"></script>
+  </body>
+</html>
