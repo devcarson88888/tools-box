@@ -125,7 +125,8 @@ Object.assign(translations.en, {
   aboutStepTwo: "Open a focused tool and use it at your own pace.",
   aboutStepThree: "Get back to whatever you wanted to do next.",
   aboutCtaKicker: "Ready when you are",
-  aboutCtaTitle: "Let's make the little things<br /><em>a little easier.</em>"
+  aboutCtaTitle: "Let's make the little things<br /><em>a little easier.</em>",
+  aboutArtOne: "make it simple", aboutArtTwo: "keep moving", aboutFooterLine: "Small tools. Big help."
 });
 Object.assign(translations.zh, {
   aboutEyebrow: "为重要的事情腾出更多空间",
@@ -153,7 +154,8 @@ Object.assign(translations.zh, {
   aboutStepTwo: "打开专注的工具，按自己的节奏使用。",
   aboutStepThree: "回到接下来真正想做的事情。",
   aboutCtaKicker: "随时等你来",
-  aboutCtaTitle: "让日常的小事<br /><em>再简单一点。</em>"
+  aboutCtaTitle: "让日常的小事<br /><em>再简单一点。</em>",
+  aboutArtOne: "简单一点", aboutArtTwo: "继续前进", aboutFooterLine: "小工具，大帮助。"
 });
 Object.assign(translations.es, {
   aboutEyebrow: "Un poco más de espacio para lo importante",
@@ -181,7 +183,177 @@ Object.assign(translations.es, {
   aboutStepTwo: "Abre una herramienta enfocada y úsala a tu ritmo.",
   aboutStepThree: "Vuelve a lo que querías hacer después.",
   aboutCtaKicker: "Cuando quieras",
-  aboutCtaTitle: "Hagamos que las pequeñas cosas<br /><em>sean más fáciles.</em>"
+  aboutCtaTitle: "Hagamos que las pequeñas cosas<br /><em>sean más fáciles.</em>",
+  aboutArtOne: "hazlo sencillo", aboutArtTwo: "sigue adelante", aboutFooterLine: "Pequeñas herramientas. Gran ayuda."
+});
+translations.fr = { ...translations.en };
+translations.de = { ...translations.en };
+translations.ja = { ...translations.en };
+Object.assign(translations.fr, {
+  home: "Accueil", allTools: "Recherche", categories: "Catégories", about: "À propos", login: "Connexion", signup: "S'inscrire",
+  eyebrow: "Votre boîte à outils numérique", heroDescription: "Des outils pratiques du quotidien pour alléger votre travail et clarifier vos idées.",
+  heroTitle: "Des outils <span class=\"title-highlight\">utiles</span>,<br />tout simplement.", toolsTitle: "Des outils pour<br /><em>les petites choses.</em>",
+  allToolsLabel: "Tous les outils", productivity: "Productivité", creative: "Créativité", developer: "Développement", everyday: "Quotidien",
+  timeZoneTitle: "Convertisseur<br />de fuseaux horaires", timeZoneText: "Gardez le rythme, où que vous soyez.",
+  colorTitle: "Palette<br />de couleurs", colorText: "Trouvez des couleurs qui s'accordent.", textTitle: "Mise en forme<br />du texte",
+  textText: "Faites compter chaque mot.", jsonTitle: "Formateur<br />JSON", jsonText: "Rendez les données désordonnées plus claires.",
+  explore: "Découvrir les outils", why: "Pourquoi tools.box", people: "personnes", monthly: "utilisent tools.box chaque mois",
+  findFlow: "Trouvez votre rythme", curated: "Choisis pour vous", viewAll: "Voir tous les outils", noClutter: "De bons outils, sans superflu",
+  browse: "Parcourir la boîte", backHome: "Retour à l'accueil", welcomeBack: "Bon retour", getStarted: "Commencer",
+  loginTitle: "Connectez-vous à<br /><em>votre boîte à outils.</em>", signupTitle: "Faites de la place<br /><em>aux idées utiles.</em>",
+  loginIntro: "Reprenez là où vous en étiez avec les outils qui vous aident à avancer.", signupIntro: "Créez un compte gratuit et gardez vos outils préférés à portée de main.",
+  emailLabel: "Adresse e-mail", passwordLabel: "Mot de passe", nameLabel: "Votre nom", remember: "Se souvenir de moi",
+  forgot: "Mot de passe oublié ?", loginButton: "Connexion", signupButton: "Créer un compte",
+  noAccount: "Vous n'avez pas de compte ?", haveAccount: "Vous avez déjà un compte ?", terms: "J'accepte les conditions et la politique de confidentialité.",
+  privateNote: "Des outils simples, conçus avec soin.", whyEyebrow: "Une meilleure façon d'avancer", whyTitle: "Pourquoi choisir<br /><em>tools.box ?</em>",
+  whyIntro: "Les choses utiles devraient être faciles à trouver. tools.box réunit des outils simples et ciblés pour chercher moins et créer davantage.",
+  valuesEyebrow: "Nos convictions", valuesTitle: "Les petits outils peuvent<br /><em>faire une grande différence.</em>",
+  valueOneTitle: "Utiles par nature", valueOneText: "Chaque outil répond à un besoin clair et à une tâche du quotidien.",
+  valueTwoTitle: "Simples à utiliser", valueTwoText: "Pas de longs tutoriels ni de configuration compliquée. Ouvrez et commencez.",
+  valueThreeTitle: "Pensés pour tous", valueThreeText: "Écrivez, planifiez, créez ou codez : vous trouverez ici un outil pour vous.",
+  howEyebrow: "Comment ça marche", howTitle: "Trouvez.<br /><em>Utilisez.</em><br />Continuez.",
+  stepOne: "Cherchez l'aide qu'il vous faut dans la boîte.", stepTwo: "Choisissez un outil ciblé, sans distraction.",
+  stepThree: "Reprenez le travail qui compte.", ctaTitle: "Prêt à trouver<br /><em>votre prochain outil utile ?</em>",
+  searchEyebrow: "Chercher dans la boîte", searchTitle: "Que pouvons-nous<br /><em>vous aider à trouver ?</em>",
+  searchDescription: "Recherchez par nom, catégorie ou tâche.", searchPlaceholder: "Essayez « couleur », « JSON » ou « fuseau horaire »",
+  searchButton: "Rechercher", results: "outils trouvés", noResults: "Aucun outil trouvé. Essayez une autre recherche.",
+  birthDateLabel: "Date de naissance", adultOnlyNotice: "Vous devez avoir au moins 18 ans pour créer un compte.",
+  aboutEyebrow: "Un peu plus de place pour l'essentiel", aboutHeroTitle: "Moins de petites tâches.<br /><em>Plus de projets qui comptent.</em>",
+  aboutHeroText: "Useful Tools Box réunit des outils simples et ciblés pour faciliter le quotidien. Trouvez ce qu'il vous faut, faites-le, puis reprenez votre journée.",
+  aboutExplore: "Découvrir les outils", aboutStoryKicker: "POURQUOI NOUS EXISTONS",
+  aboutStoryTitle: "Les bons outils ne devraient pas vous ralentir.",
+  aboutStoryText: "Parfois, il suffit de vérifier un fuseau horaire, de mettre un texte en forme ou de comprendre un fichier. Vous devriez pouvoir ouvrir un outil clair et continuer, sans bruit ni configuration compliquée.",
+  aboutStoryTextTwo: "Voilà l'idée de tools.box : réunir des outils pratiques dans un espace accueillant, garder chaque expérience simple et rendre l'utilité naturelle.",
+  aboutPrinciplesKicker: "Nos principes essentiels", aboutPrinciplesTitle: "Pensé avec soin.<br /><em>Utile au quotidien.</em>",
+  aboutPurpose: "UTILITÉ", aboutSimplicity: "SIMPLICITÉ", aboutPeople: "TOUT LE MONDE",
+  aboutPrincipleOneTitle: "Commencer par l'utile", aboutPrincipleOneText: "Chaque outil doit résoudre clairement un vrai problème du quotidien.",
+  aboutPrincipleTwoTitle: "Faire simple", aboutPrincipleTwoText: "Des interfaces claires : moins de temps à comprendre, plus de temps à agir.",
+  aboutPrincipleThreeTitle: "Une place pour chacun", aboutPrincipleThreeText: "Pour planifier, écrire, créer ou coder, trouvez ici de quoi vous lancer.",
+  aboutHowKicker: "Un chemin simple", aboutHowTitle: "Trouvez votre outil.<br /><em>Trouvez votre rythme.</em>",
+  aboutStepOne: "Parcourez les outils ou cherchez la tâche qui vous occupe.", aboutStepTwo: "Ouvrez un outil ciblé et utilisez-le à votre rythme.",
+  aboutStepThree: "Reprenez ce que vous aviez envie de faire.", aboutCtaKicker: "Quand vous voulez",
+  aboutCtaTitle: "Simplifions les petites choses<br /><em>du quotidien.</em>",
+  aboutArtOne: "faire simple", aboutArtTwo: "continuer", aboutFooterLine: "Petits outils. Grande aide."
+});
+Object.assign(translations.de, {
+  home: "Startseite", allTools: "Suche", categories: "Kategorien", about: "Über uns", login: "Anmelden", signup: "Registrieren",
+  eyebrow: "Dein digitaler Werkzeugkasten", heroDescription: "Praktische Alltagswerkzeuge, die deine Arbeit erleichtern und Ideen klarer machen.",
+  heroTitle: "Nützliche <span class=\"title-highlight\">Tools</span>,<br />ganz einfach.", toolsTitle: "Tools für<br /><em>die kleinen Dinge.</em>",
+  allToolsLabel: "Alle Tools", productivity: "Produktivität", creative: "Kreatives", developer: "Entwicklung", everyday: "Alltag",
+  timeZoneTitle: "Zeitzonen-<br />umrechner", timeZoneText: "Bleib im Takt, wo immer du bist.",
+  colorTitle: "Farb-<br />palette", colorText: "Finde Farben, die gut zusammenpassen.", textTitle: "Text<br />formatieren",
+  textText: "Mach jedes Wort wertvoll.", jsonTitle: "JSON<br />formatieren", jsonText: "Bring Ordnung in unübersichtliche Daten.",
+  explore: "Tools entdecken", why: "Warum tools.box", people: "Menschen", monthly: "nutzen tools.box jeden Monat",
+  findFlow: "Finde deinen Flow", curated: "Für dich ausgewählt", viewAll: "Alle Tools ansehen", noClutter: "Gute Tools, kein Ballast",
+  browse: "Werkzeugkasten öffnen", backHome: "Zur Startseite", welcomeBack: "Willkommen zurück", getStarted: "Los geht's",
+  loginTitle: "Melde dich bei<br /><em>deinem Werkzeugkasten an.</em>", signupTitle: "Schaffe Platz für<br /><em>nützliche Dinge.</em>",
+  loginIntro: "Mach dort weiter, wo du aufgehört hast – mit Tools, die dich unterstützen.", signupIntro: "Erstelle ein kostenloses Konto und halte deine Lieblingstools griffbereit.",
+  emailLabel: "E-Mail-Adresse", passwordLabel: "Passwort", nameLabel: "Dein Name", remember: "Angemeldet bleiben",
+  forgot: "Passwort vergessen?", loginButton: "Anmelden", signupButton: "Konto erstellen",
+  noAccount: "Noch kein Konto?", haveAccount: "Du hast bereits ein Konto?", terms: "Ich stimme den Nutzungsbedingungen und der Datenschutzerklärung zu.",
+  privateNote: "Einfache Tools, mit Sorgfalt gemacht.", whyEyebrow: "Ein besserer Weg, Dinge zu erledigen",
+  whyTitle: "Warum<br /><em>tools.box?</em>", whyIntro: "Nützliche Dinge sollten leicht zu finden sein. tools.box bündelt einfache, fokussierte Tools – damit du weniger suchst und mehr schaffst.",
+  valuesEyebrow: "Woran wir glauben", valuesTitle: "Kleine Tools können<br /><em>viel bewirken.</em>",
+  valueOneTitle: "Von Anfang an nützlich", valueOneText: "Jedes Tool hat einen klaren Zweck und hilft bei einer echten Aufgabe.",
+  valueTwoTitle: "Einfach zu nutzen", valueTwoText: "Keine langen Anleitungen oder komplizierte Einrichtung. Öffnen und loslegen.",
+  valueThreeTitle: "Für alle gemacht", valueThreeText: "Ob Schreiben, Planen, Gestalten oder Programmieren – hier ist etwas für dich.",
+  howEyebrow: "So funktioniert es", howTitle: "Finden.<br /><em>Nutzen.</em><br />Weitermachen.",
+  stepOne: "Suche nach der Hilfe, die du gerade brauchst.", stepTwo: "Wähle ein fokussiertes Tool ohne Ablenkung.",
+  stepThree: "Mach weiter mit dem, was dir wichtig ist.", ctaTitle: "Bereit für<br /><em>dein nächstes nützliches Tool?</em>",
+  searchEyebrow: "Werkzeugkasten durchsuchen", searchTitle: "Wonach suchst<br /><em>du?</em>",
+  searchDescription: "Suche nach Namen, Kategorie oder Aufgabe.", searchPlaceholder: "Zum Beispiel „Farbe“, „JSON“ oder „Zeitzone“",
+  searchButton: "Suchen", results: "Tools gefunden", noResults: "Keine Tools gefunden. Versuch es mit einer anderen Suche.",
+  birthDateLabel: "Geburtsdatum", adultOnlyNotice: "Du musst mindestens 18 Jahre alt sein, um ein Konto zu erstellen.",
+  aboutEyebrow: "Mehr Platz für das, was zählt", aboutHeroTitle: "Weniger Kleinkram.<br /><em>Mehr gute Arbeit.</em>",
+  aboutHeroText: "Useful Tools Box vereint kleine, fokussierte Tools, die den Alltag erleichtern. Finde, was du brauchst, erledige es und mach mit deinem Tag weiter.",
+  aboutExplore: "Tools entdecken", aboutStoryKicker: "WARUM ES UNS GIBT",
+  aboutStoryTitle: "Gute Tools sollten dich nicht aufhalten.",
+  aboutStoryText: "Manchmal möchtest du nur eine Zeitzone prüfen, einen Text ordnen oder eine Datei verstehen. Statt dich durch Ablenkungen und komplizierte Einstellungen zu kämpfen, solltest du einfach ein klares Tool öffnen und weitermachen können.",
+  aboutStoryTextTwo: "Das ist die Idee hinter tools.box: Praktisches an einem freundlichen Ort sammeln, jede Nutzung fokussiert halten und Nützliches mühelos machen.",
+  aboutPrinciplesKicker: "Unsere wichtigen Grundsätze", aboutPrinciplesTitle: "Mit Bedacht gestaltet.<br /><em>Im Alltag nützlich.</em>",
+  aboutPurpose: "ZWECK", aboutSimplicity: "EINFACHHEIT", aboutPeople: "MENSCHEN",
+  aboutPrincipleOneTitle: "Nützlich anfangen", aboutPrincipleOneText: "Jedes Tool soll ein echtes Alltagsproblem klar und unkompliziert lösen.",
+  aboutPrincipleTwoTitle: "Einfach halten", aboutPrincipleTwoText: "Klare Oberflächen bedeuten weniger Grübeln und mehr Erledigen.",
+  aboutPrincipleThreeTitle: "Für alle da", aboutPrincipleThreeText: "Ob Planen, Schreiben, Gestalten oder Programmieren – hier kannst du loslegen.",
+  aboutHowKicker: "Ein einfacher Weg", aboutHowTitle: "Finde dein Tool.<br /><em>Finde deinen Flow.</em>",
+  aboutStepOne: "Stöbere oder suche nach deiner aktuellen Aufgabe.", aboutStepTwo: "Öffne ein fokussiertes Tool und nutze es in deinem Tempo.",
+  aboutStepThree: "Mach weiter mit dem, was du als Nächstes tun wolltest.", aboutCtaKicker: "Wann immer du bereit bist",
+  aboutCtaTitle: "Machen wir die kleinen Dinge<br /><em>einfacher.</em>",
+  aboutArtOne: "einfach machen", aboutArtTwo: "weitermachen", aboutFooterLine: "Kleine Tools. Große Hilfe."
+});
+Object.assign(translations.ja, {
+  home: "ホーム", allTools: "検索", categories: "カテゴリー", about: "私たちについて", login: "ログイン", signup: "新規登録",
+  eyebrow: "あなたのデジタルツールボックス", heroDescription: "日々の作業を少し楽にし、アイデアをもっと明確にする便利なツールを集めました。",
+  heroTitle: "便利な<span class=\"title-highlight\">ツール</span>を、<br />シンプルに。", toolsTitle: "ちょっとしたことに<br /><em>役立つツール。</em>",
+  allToolsLabel: "すべてのツール", productivity: "効率化", creative: "クリエイティブ", developer: "開発", everyday: "日常",
+  timeZoneTitle: "タイムゾーン<br />変換", timeZoneText: "どこにいても時間を逃しません。",
+  colorTitle: "カラーパレット", colorText: "相性のよい色を見つけましょう。", textTitle: "テキスト<br />整形",
+  textText: "言葉をもっと読みやすく。", jsonTitle: "JSON<br />整形", jsonText: "複雑なデータをわかりやすく。",
+  explore: "ツールを見る", why: "tools.box について", people: "人", monthly: "人が毎月 tools.box を利用",
+  findFlow: "自分のペースで", curated: "おすすめ", viewAll: "すべて見る", noClutter: "便利なツールを、すっきりと",
+  browse: "ツールを探す", backHome: "ホームに戻る", welcomeBack: "おかえりなさい", getStarted: "はじめましょう",
+  loginTitle: "<em>ツールボックス</em>に<br />ログイン", signupTitle: "便利なツールを<br /><em>いつでも手元に。</em>",
+  loginIntro: "前回の続きから、作業に役立つツールを使いましょう。", signupIntro: "無料アカウントを作成して、お気に入りのツールをすぐ使えるようにしましょう。",
+  emailLabel: "メールアドレス", passwordLabel: "パスワード", nameLabel: "お名前", remember: "ログイン状態を保持",
+  forgot: "パスワードをお忘れですか？", loginButton: "ログイン", signupButton: "アカウントを作成",
+  noAccount: "アカウントをお持ちでない方", haveAccount: "すでにアカウントをお持ちですか？", terms: "利用規約とプライバシーポリシーに同意します。",
+  privateNote: "心を込めたシンプルなツール。", whyEyebrow: "もっとスムーズに作業するために",
+  whyTitle: "tools.boxを<br /><em>選ぶ理由</em>", whyIntro: "便利なものは、すぐ見つかるべきです。tools.boxはシンプルで目的に集中できるツールをまとめ、探す時間を減らして創作の時間を増やします。",
+  valuesEyebrow: "大切にしていること", valuesTitle: "小さなツールが<br /><em>大きな違いを生む。</em>",
+  valueOneTitle: "使いやすさを第一に", valueOneText: "一つひとつのツールが、日常の具体的な作業を助けます。",
+  valueTwoTitle: "シンプルに", valueTwoText: "長い説明や複雑な設定は不要。開いてすぐ使えます。",
+  valueThreeTitle: "誰にとっても使いやすく", valueThreeText: "文章、計画、デザイン、開発。あなたに合うツールが見つかります。",
+  howEyebrow: "使い方", howTitle: "見つける。<br /><em>使う。</em><br />次へ進む。",
+  stepOne: "必要なツールを検索します。", stepTwo: "集中できるツールを選んで使います。",
+  stepThree: "大切な作業に戻りましょう。", ctaTitle: "次のお気に入りツールを<br /><em>見つけませんか？</em>",
+  searchEyebrow: "ツールを検索", searchTitle: "何を<br /><em>お探しですか？</em>",
+  searchDescription: "名前、カテゴリー、やりたいことから検索できます。", searchPlaceholder: "「色」「JSON」「タイムゾーン」など",
+  searchButton: "検索", results: "件のツール", noResults: "ツールが見つかりません。別の言葉で検索してください。",
+  birthDateLabel: "生年月日", adultOnlyNotice: "アカウント作成には18歳以上である必要があります。",
+  aboutEyebrow: "大切なことに、もう少し時間を", aboutHeroTitle: "雑務を減らして。<br /><em>やりたいことを。</em>",
+  aboutHeroText: "Useful Tools Boxは、毎日の作業を少し楽にするシンプルなツールを集めた場所です。必要なものを見つけて使ったら、また自分の時間へ。",
+  aboutExplore: "ツールを見る", aboutStoryKicker: "私たちの想い",
+  aboutStoryTitle: "よいツールは、作業の邪魔をしません。",
+  aboutStoryText: "タイムゾーンを確認したい、文章を整えたい、ファイルの内容を知りたい。広告や複雑な設定に悩まず、わかりやすいツールを開いてすぐに作業を続けられるべきです。",
+  aboutStoryTextTwo: "それがtools.boxの考え方です。便利なものをひとつの場所に集め、使う人が迷わず、自然に役立つ体験を目指します。",
+  aboutPrinciplesKicker: "大切にする3つのこと", aboutPrinciplesTitle: "丁寧に設計。<br /><em>日々の暮らしに役立つ。</em>",
+  aboutPurpose: "目的", aboutSimplicity: "シンプル", aboutPeople: "みんな",
+  aboutPrincipleOneTitle: "役立つことから", aboutPrincipleOneText: "日常の本当の困りごとを、わかりやすく解決するツールを作ります。",
+  aboutPrincipleTwoTitle: "シンプルに保つ", aboutPrincipleTwoText: "迷う時間を減らし、すぐに使えるわかりやすい画面を大切にします。",
+  aboutPrincipleThreeTitle: "誰もが使えるように", aboutPrincipleThreeText: "計画、文章、創作、プログラミング。ここから始められます。",
+  aboutHowKicker: "シンプルな使い方", aboutHowTitle: "ツールを見つけて。<br /><em>自分のペースで。</em>",
+  aboutStepOne: "必要な作業を検索、または一覧から探します。", aboutStepTwo: "目的に合ったツールを自分のペースで使います。",
+  aboutStepThree: "次にやりたいことへ戻りましょう。", aboutCtaKicker: "いつでもどうぞ",
+  aboutCtaTitle: "日々の小さな作業を<br /><em>もっと簡単に。</em>",
+  aboutArtOne: "シンプルに", aboutArtTwo: "前に進もう", aboutFooterLine: "小さなツール、大きな助け。"
+});
+const languageLabels = { en: "EN", zh: "中文", es: "ES", fr: "FR", de: "DE", ja: "日本語" };
+Object.assign(switchAccountLabels, { fr: "Changer de compte", de: "Konto wechseln", ja: "アカウントを切り替える" });
+Object.assign(welcomeLabels, { fr: "Bienvenue", de: "Willkommen", ja: "ようこそ" });
+Object.assign(authFeedback, {
+  fr: { login: "Connexion impossible. Vérifiez votre adresse e-mail et votre mot de passe.", signup: "Création du compte impossible. Réessayez." },
+  de: { login: "Anmeldung nicht möglich. Prüfe E-Mail-Adresse und Passwort.", signup: "Konto konnte nicht erstellt werden. Bitte versuche es erneut." },
+  ja: { login: "ログインできません。メールアドレスとパスワードを確認してください。", signup: "アカウントを作成できませんでした。もう一度お試しください。" }
+});
+Object.assign(authSuccess, {
+  fr: { login: "Connexion réussie. Redirection…", signup: "Compte créé. Vérifiez votre e-mail pour confirmer votre adresse." },
+  de: { login: "Erfolgreich angemeldet. Weiterleitung…", signup: "Konto erstellt. Bestätige deine E-Mail-Adresse." },
+  ja: { login: "ログインしました。移動しています…", signup: "アカウントを作成しました。メールを確認してください。" }
+});
+Object.assign(ageRequirementCopy, {
+  fr: "Vous devez avoir au moins 18 ans pour créer un compte.",
+  de: "Du musst mindestens 18 Jahre alt sein, um ein Konto zu erstellen.",
+  ja: "アカウントを作成するには18歳以上である必要があります。"
+});
+Object.assign(resetMessages, {
+  fr: { email: "Saisissez l'adresse e-mail utilisée pour l'inscription :", sent: "E-mail de réinitialisation envoyé. Vérifiez votre boîte de réception.", missing: "Saisissez une adresse e-mail." },
+  de: { email: "Gib die E-Mail-Adresse ein, mit der du dich registriert hast:", sent: "E-Mail zum Zurücksetzen gesendet. Prüfe deinen Posteingang.", missing: "Bitte gib eine E-Mail-Adresse ein." },
+  ja: { email: "登録に使用したメールアドレスを入力してください：", sent: "パスワード再設定メールを送信しました。受信箱をご確認ください。", missing: "メールアドレスを入力してください。" }
+});
+Object.assign(switchPageCopy, {
+  fr: { switchAccount: "Changer de compte", accountSettings: "Paramètres du compte", switchTitle: "Changer<br /><em>de compte.</em>", switchIntro: "Vous êtes connecté en tant que :", switchButton: "Continuer avec un autre compte", signOutButton: "Annuler la connexion", staySignedIn: "Rester connecté" },
+  de: { switchAccount: "Konto wechseln", accountSettings: "Kontoeinstellungen", switchTitle: "Wechsle<br /><em>dein Konto.</em>", switchIntro: "Du bist derzeit angemeldet als:", switchButton: "Mit einem anderen Konto fortfahren", signOutButton: "Abmelden abbrechen", staySignedIn: "Angemeldet bleiben" },
+  ja: { switchAccount: "アカウントを切り替える", accountSettings: "アカウント設定", switchTitle: "<em>アカウント</em>を<br />切り替える", switchIntro: "現在ログイン中のアカウント：", switchButton: "別のアカウントで続行", signOutButton: "ログインをキャンセル", staySignedIn: "ログインしたままにする" }
 });
 
 function setLanguage(language) {
@@ -206,7 +378,7 @@ function setLanguage(language) {
   document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
     element.placeholder = copy[element.dataset.i18nPlaceholder];
   });
-  if (languageCurrent) languageCurrent.textContent = language === "zh" ? "中文" : language === "es" ? "ES" : "EN";
+  if (languageCurrent) languageCurrent.textContent = languageLabels[language] || languageLabels.en;
   document.querySelectorAll("[data-language]").forEach((option) => {
     option.setAttribute("aria-selected", String(option.dataset.language === language));
   });
