@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Meet Useful Tools Box: a thoughtful collection of simple tools for the little things in work and life." />
+    <link rel="canonical" href="https://tools-box.carson88888.workers.dev/about/" />
+    <title>About us — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/#top" aria-label="Useful Tools Box home">
+          <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span>
+          <span>tools<span class="brand-dot">.</span>box</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span><span class="sr-only">Toggle navigation</span>
+        </button>
+        <div class="nav-links" id="nav-links">
+          <a class="nav-link" href="/#top">Home</a>
+          <a class="nav-link" href="/search/">Search</a>
+          <a class="nav-link" href="/#categories">Categories</a>
+          <a class="nav-link active" href="/about/" aria-current="page">About us</a>
+          <div class="nav-actions">
+            <div class="language-picker">
+              <button class="language-toggle" id="language-toggle" type="button" aria-haspopup="listbox" aria-expanded="false">
+                <span id="language-current">EN</span><span aria-hidden="true">⌄</span>
+              </button>
+              <div class="language-menu" id="language-menu" role="listbox" aria-label="Select language" hidden>
+                <button type="button" role="option" data-language="en">English <span>EN</span></button>
+                <button type="button" role="option" data-language="zh">中文 <span>中文</span></button>
+                <button type="button" role="option" data-language="es">Español <span>ES</span></button>
+              </div>
+            </div>
+            <a class="login-link" id="login-nav-link" href="/login/">Log in</a>
+            <a class="button button-dark button-small" id="signup-nav-link" href="/signup/">Sign up <span aria-hidden="true">↗</span></a>
+            <span class="account-area" id="account-area" hidden>
+              <span class="account-avatar" id="account-avatar" aria-hidden="true">U</span>
+              <span class="account-welcome"><span data-i18n="welcomeUser">Welcome</span> <strong id="account-email"></strong></span>
+              <a class="logout-button" id="switch-account-link" href="/switch-account/" data-i18n="switchAccount">Switch account</a>
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      <main class="about-page">
+        <section class="about-hero" aria-labelledby="about-title">
+          <div class="about-hero-copy">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="aboutEyebrow">A little more room for what matters</span></div>
+            <h1 id="about-title" data-i18n="aboutHeroTitle">Less busywork.<br /><em>More good work.</em></h1>
+            <p data-i18n="aboutHeroText">Useful Tools Box brings small, focused tools together to make everyday tasks feel a little easier. Find what you need, get it done, and get back to your day.</p>
+            <a class="button button-dark" href="/search/"><span data-i18n="aboutExplore">Explore the tools</span> <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="about-hero-art" aria-hidden="true">
+            <div class="about-art-orbit"></div>
+            <div class="about-art-center"><span>tools</span><strong>for your<br />everyday.</strong></div>
+            <div class="about-art-card about-art-card-one"><span>✳</span><b>make it simple</b></div>
+            <div class="about-art-card about-art-card-two"><span>↗</span><b>keep moving</b></div>
+          </div>
+        </section>
+
+        <section class="about-story" aria-labelledby="about-story-title">
+          <div class="about-story-label">
+            <span class="section-kicker" data-i18n="aboutStoryKicker">WHY WE'RE HERE</span>
+            <span class="about-story-mark" aria-hidden="true">✳</span>
+          </div>
+          <div class="about-story-copy">
+            <h2 id="about-story-title" data-i18n="aboutStoryTitle">Good tools shouldn't get in your way.</h2>
+            <p data-i18n="aboutStoryText">Sometimes you just need to check a time zone, tidy up a block of text, or make sense of a file. Instead of wading through clutter, ads, and complicated setup, you should be able to open one clear tool and carry on.</p>
+            <p data-i18n="aboutStoryTextTwo">That's the idea behind tools.box: bring handy things into one welcoming place, keep each experience focused, and make useful feel effortless.</p>
+          </div>
+        </section>
+
+        <section class="about-principles" aria-labelledby="about-principles-title">
+          <div class="about-section-heading">
+            <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="aboutPrinciplesKicker">Our little-big principles</span></div>
+            <h2 id="about-principles-title" data-i18n="aboutPrinciplesTitle">Thoughtful by design.<br /><em>Useful in real life.</em></h2>
+          </div>
+          <div class="about-principle-grid">
+            <article class="about-principle-card card-lilac">
+              <span class="value-number">01 / <span data-i18n="aboutPurpose">PURPOSE</span></span>
+              <span class="about-principle-icon" aria-hidden="true">◎</span>
+              <h3 data-i18n="aboutPrincipleOneTitle">Start with useful</h3>
+              <p data-i18n="aboutPrincipleOneText">Every tool should solve a real, everyday problem — clearly and without extra fuss.</p>
+            </article>
+            <article class="about-principle-card card-cream">
+              <span class="value-number">02 / <span data-i18n="aboutSimplicity">SIMPLICITY</span></span>
+              <span class="about-principle-icon" aria-hidden="true">↗</span>
+              <h3 data-i18n="aboutPrincipleTwoTitle">Keep it simple</h3>
+              <p data-i18n="aboutPrincipleTwoText">Straightforward interfaces help you spend less time figuring things out and more time doing.</p>
+            </article>
+            <article class="about-principle-card card-sage">
+              <span class="value-number">03 / <span data-i18n="aboutPeople">PEOPLE</span></span>
+              <span class="about-principle-icon" aria-hidden="true">✳</span>
+              <h3 data-i18n="aboutPrincipleThreeTitle">Make room for everyone</h3>
+              <p data-i18n="aboutPrincipleThreeText">Whether you're planning, writing, creating, or coding, the box is here to help you get going.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="about-how" aria-labelledby="about-how-title">
+          <div>
+            <div class="eyebrow eyebrow-light"><span class="eyebrow-dot"></span> <span data-i18n="aboutHowKicker">A simple way forward</span></div>
+            <h2 id="about-how-title" data-i18n="aboutHowTitle">Find your tool.<br /><em>Find your flow.</em></h2>
+          </div>
+          <div class="about-how-steps">
+            <p><strong>01</strong><span data-i18n="aboutStepOne">Look around or search for the task on your mind.</span></p>
+            <p><strong>02</strong><span data-i18n="aboutStepTwo">Open a focused tool and use it at your own pace.</span></p>
+            <p><strong>03</strong><span data-i18n="aboutStepThree">Get back to whatever you wanted to do next.</span></p>
+          </div>
+        </section>
+
+        <section class="about-cta">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-dot"></span> <span data-i18n="aboutCtaKicker">Ready when you are</span></div>
+            <h2 data-i18n="aboutCtaTitle">Let's make the little things<br /><em>a little easier.</em></h2>
+          </div>
+          <a class="button button-dark" href="/search/"><span data-i18n="aboutExplore">Explore the tools</span> <span aria-hidden="true">↗</span></a>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <a class="brand" href="/#top"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <p>Small tools. Big help.</p><span>© 2026 tools.box</span>
+      </footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../script.js?v=20261004-signup-code"></script>
+  </body>
+</html>
