@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Format, clean, and transform text with the free Useful Tools Box text formatter." />
+    <title>Text formatter — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../styles.css?v=20261005-tools" />
+    <link rel="stylesheet" href="../tools.css?v=20261005-tools" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="/#top" aria-label="Useful Tools Box home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <a class="auth-home-link" href="/search/">← Back to tools</a>
+      </nav>
+      <main class="standalone-tool">
+        <a class="back-link" href="/#tools">← All tools</a>
+        <header class="tool-heading">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Everyday tool</div>
+          <h1>Text <em>formatter.</em></h1>
+          <p>Clean up text in seconds. Change letter case, remove extra spaces, sort lines, and copy or download the result.</p>
+        </header>
+        <section class="tool-workspace" aria-label="Text formatter">
+          <label class="tool-field-label" for="text-input">Your text</label>
+          <textarea class="tool-textarea" id="text-input" spellcheck="true" placeholder="Type or paste your text here…"></textarea>
+          <div class="tool-metrics" aria-live="polite">
+            <span id="word-count">0 words</span>
+            <span id="character-count">0 characters</span>
+            <span id="line-count">0 lines</span>
+          </div>
+          <div class="tool-toolbar" role="group" aria-label="Text formatting actions">
+            <button class="tool-button" type="button" data-action="uppercase">UPPERCASE</button>
+            <button class="tool-button" type="button" data-action="lowercase">lowercase</button>
+            <button class="tool-button" type="button" data-action="titlecase">Title Case</button>
+            <button class="tool-button" type="button" data-action="sentencecase">Sentence case</button>
+          </div>
+          <div class="tool-toolbar" role="group" aria-label="Text cleanup actions">
+            <button class="tool-button" type="button" data-action="trim">Trim lines</button>
+            <button class="tool-button" type="button" data-action="spaces">Normalize spaces</button>
+            <button class="tool-button" type="button" data-action="blanklines">Remove extra blank lines</button>
+            <button class="tool-button" type="button" data-action="sort">Sort lines A–Z</button>
+          </div>
+          <div class="tool-toolbar">
+            <button class="tool-button tool-button-primary" id="copy-text" type="button">Copy text</button>
+            <button class="tool-button" id="download-text" type="button">Download .txt</button>
+            <button class="tool-button" id="clear-text" type="button">Clear</button>
+          </div>
+          <p class="tool-status" id="text-status" role="status" aria-live="polite"></p>
+        </section>
+      </main>
+      <footer class="footer"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a><span>© 2026 tools.box</span></footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../script.js?v=20261005-tools"></script>
+    <script src="app.js?v=20261005-tools"></script>
+  </body>
+</html>
