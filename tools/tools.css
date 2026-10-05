@@ -39,6 +39,8 @@
 .palette-swatch:hover .swatch-copy, .palette-swatch:focus-visible .swatch-copy { opacity: 1; }
 .palette-footnote { color: var(--muted); font-size: 11px; line-height: 1.5; margin: 18px 0 0; }
 .json-output { background: #f3f1ee; }
+.unit-result { background: var(--paper); border: 1px solid var(--line); border-radius: 10px; color: var(--ink); display: block; font: 600 16px/1.5 "DM Sans", sans-serif; margin-top: 14px; overflow-wrap: anywhere; padding: 16px; }
+#timestamp-result { display: block; line-height: 1.7; overflow-wrap: anywhere; }
 :root[data-theme="dark"] .tool-workspace { background: #23212a; }
 :root[data-theme="dark"] .tool-button { background: #2c2933; border-color: var(--line); color: var(--ink); }
 :root[data-theme="dark"] .tool-button-primary { background: var(--ink); border-color: var(--ink); color: #17161c; }
@@ -47,6 +49,7 @@
 :root[data-theme="dark"] .tool-workspace select,
 :root[data-theme="dark"] .tool-workspace input:not([type="color"]) { background: #1b1a21; border-color: var(--line); }
 :root[data-theme="dark"] .json-output { background: #1b1a21; }
+:root[data-theme="dark"] .unit-result { background: #1b1a21; border-color: var(--line); }
 :root[data-theme="dark"] .tool-heading h1 em { color: #c7bbdf; }
 @media (max-width: 700px) {
   .standalone-tool { padding: 38px 2px 58px; }

@@ -12,7 +12,12 @@ const tools = [
   { name: "Time zone converter", category: "Productivity", description: "Never miss a beat, wherever you are.", icon: "◷", className: "card-lilac", path: "../tools/Time-zone-converter/" },
   { name: "Color palette", category: "Creative", description: "Find colors that play well together.", icon: "◉", className: "card-cream", path: "../tools/Color-palette/" },
   { name: "Text formatter", category: "Everyday", description: "Make every word count beautifully.", icon: "Aa", className: "card-sage", path: "../tools/Text-formatter/" },
-  { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach", path: "../tools/JSON-formatter/" }
+  { name: "JSON formatter", category: "Developer", description: "Turn messy data into something clear.", icon: "{ }", className: "card-peach", path: "../tools/JSON-formatter/" },
+  { name: "UUID generator", category: "Developer", description: "Create secure, unique IDs in seconds.", icon: "⌗", className: "card-lilac", path: "../tools/UUID-generator/" },
+  { name: "URL encoder", category: "Developer", description: "Encode or decode URL components.", icon: "↗", className: "card-cream", path: "../tools/URL-encoder/" },
+  { name: "Base64 converter", category: "Developer", description: "Convert text to and from Base64.", icon: "64", className: "card-sage", path: "../tools/Base64-converter/" },
+  { name: "Timestamp converter", category: "Everyday", description: "Translate Unix time into a date.", icon: "◷", className: "card-peach", path: "../tools/Timestamp-converter/" },
+  { name: "Unit converter", category: "Everyday", description: "Convert everyday measurements with ease.", icon: "↔", className: "card-lilac", path: "../tools/Unit-converter/" }
 ];
 
 const themeLabels = {
@@ -367,6 +372,15 @@ Object.assign(translations.ja, {
   aboutArtOne: "シンプルに", aboutArtTwo: "前に進もう", aboutFooterLine: "小さなツール、大きな助け。"
 });
 const languageLabels = { en: "EN", zh: "中文", es: "ES", fr: "FR", de: "DE", ja: "日本語" };
+const newToolTranslations = {
+  en: { uuidTitle: "UUID<br />generator", uuidText: "Create secure, unique IDs in seconds.", urlTitle: "URL<br />encoder", urlText: "Encode or decode URL components.", base64Title: "Base64<br />converter", base64Text: "Convert text to and from Base64.", timestampTitle: "Timestamp<br />converter", timestampText: "Translate Unix time into a date.", unitTitle: "Unit<br />converter", unitText: "Convert everyday measurements with ease." },
+  zh: { uuidTitle: "UUID<br />生成器", uuidText: "快速生成安全且唯一的 ID。", urlTitle: "URL<br />编码器", urlText: "编码或解码 URL 组件。", base64Title: "Base64<br />转换器", base64Text: "在文本与 Base64 之间转换。", timestampTitle: "时间戳<br />转换器", timestampText: "将 Unix 时间转换为日期。", unitTitle: "单位<br />转换器", unitText: "轻松转换常见计量单位。" },
+  es: { uuidTitle: "Generador<br />UUID", uuidText: "Crea identificadores únicos y seguros.", urlTitle: "Codificador<br />URL", urlText: "Codifica o decodifica componentes URL.", base64Title: "Conversor<br />Base64", base64Text: "Convierte texto y Base64.", timestampTitle: "Conversor de<br />tiempo Unix", timestampText: "Transforma una marca de tiempo en fecha.", unitTitle: "Conversor de<br />unidades", unitText: "Convierte medidas cotidianas fácilmente." },
+  fr: { uuidTitle: "Générateur<br />UUID", uuidText: "Créez des identifiants uniques et sûrs.", urlTitle: "Encodeur<br />URL", urlText: "Encodez ou décodez des composants URL.", base64Title: "Convertisseur<br />Base64", base64Text: "Convertissez du texte et du Base64.", timestampTitle: "Convertisseur<br />Unix", timestampText: "Transformez un horodatage en date.", unitTitle: "Convertisseur<br />d’unités", unitText: "Convertissez facilement les mesures courantes." },
+  de: { uuidTitle: "UUID-<br />Generator", uuidText: "Erzeuge sichere, eindeutige IDs.", urlTitle: "URL-<br />Encoder", urlText: "Kodiere oder dekodiere URL-Bestandteile.", base64Title: "Base64-<br />Konverter", base64Text: "Wandle Text in Base64 um und zurück.", timestampTitle: "Zeitstempel-<br />Konverter", timestampText: "Wandle Unix-Zeit in ein Datum um.", unitTitle: "Einheiten-<br />umrechner", unitText: "Rechne gängige Maße ganz einfach um." },
+  ja: { uuidTitle: "UUID<br />生成", uuidText: "安全で一意なIDをすぐに作成。", urlTitle: "URL<br />エンコード", urlText: "URLの各要素をエンコード・デコード。", base64Title: "Base64<br />変換", base64Text: "テキストとBase64を相互変換。", timestampTitle: "タイムスタンプ<br />変換", timestampText: "Unix時刻を日付に変換。", unitTitle: "単位<br />変換", unitText: "よく使う単位を簡単に変換。" }
+};
+Object.entries(newToolTranslations).forEach(([language, copy]) => Object.assign(translations[language], copy));
 Object.assign(switchAccountLabels, { fr: "Changer de compte", de: "Konto wechseln", ja: "アカウントを切り替える" });
 Object.assign(welcomeLabels, { fr: "Bienvenue", de: "Willkommen", ja: "ようこそ" });
 Object.assign(authFeedback, {

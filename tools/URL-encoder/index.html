@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Encode and decode URL components locally with Useful Tools Box." />
+    <title>URL encoder and decoder — Useful Tools Box</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../../styles.css?v=20261005-more-tools" />
+    <link rel="stylesheet" href="../tools.css?v=20261005-more-tools" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <nav class="navbar" aria-label="Main navigation">
+        <a class="brand" href="../../#top" aria-label="Useful Tools Box home"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a>
+        <a class="auth-home-link" href="../../search/">← Back to tools</a>
+      </nav>
+      <main class="standalone-tool">
+        <a class="back-link" href="../../#tools">← All tools</a>
+        <header class="tool-heading">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> Developer tool · processed in your browser</div>
+          <h1>URL <em>encoder.</em></h1>
+          <p>Safely encode text for a URL component or decode an encoded value. Your input stays in this browser.</p>
+        </header>
+        <section class="tool-workspace" aria-label="URL encoder and decoder">
+          <div class="tool-columns">
+            <div class="tool-panel">
+              <label class="tool-field-label" for="url-input">Input text or URL component</label>
+              <textarea class="tool-textarea" id="url-input" autocapitalize="off" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Type or paste text here…"></textarea>
+            </div>
+            <div class="tool-panel">
+              <label class="tool-field-label" for="url-output">Result</label>
+              <textarea class="tool-textarea json-output" id="url-output" readonly spellcheck="false" placeholder="The encoded or decoded result will appear here…"></textarea>
+            </div>
+          </div>
+          <div class="tool-toolbar" role="group" aria-label="URL actions">
+            <button class="tool-button tool-button-primary" id="encode-url" type="button">Encode component</button>
+            <button class="tool-button" id="decode-url" type="button">Decode component</button>
+            <button class="tool-button" id="copy-url" type="button" disabled>Copy result</button>
+            <button class="tool-button" id="clear-url" type="button">Clear</button>
+          </div>
+          <p class="tool-status" id="url-status" role="status" aria-live="polite">Encoding uses the standard URL component format.</p>
+        </section>
+      </main>
+      <footer class="footer"><a class="brand" href="../../"><span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></span><span>tools<span class="brand-dot">.</span>box</span></a><span>© 2026 tools.box</span></footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../../script.js?v=20261005-more-tools"></script>
+    <script src="app.js?v=20261005-more-tools"></script>
+  </body>
+</html>
