@@ -1,3 +1,4 @@
+English | [简体中文](README_ZHCN.md)
 # Useful Tools Box
 
 Useful Tools Box is a static site hosted on Cloudflare Workers Static Assets. Authentication and publisher moderation use Supabase; published tools are stored in the `create/` directory of this repository through the `github-publish` Edge Function.
