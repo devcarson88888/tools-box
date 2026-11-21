@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<title>HTML 即時預覽器｜修復行號對齊Bug</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100vh;font-family:system-ui, sans-serif;overflow:hidden}
+.top-bar{
+    height:44px;
+    background:#222;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    padding:0 12px;
+}
+button{
+    padding:6px 12px;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:13px;
+}
+#clearBtn{background:#ef4444;color:white}
+#sampleBtn{background:#2563eb;color:white}
+.wrap{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    height:calc(100vh - 44px);
+}
+.code-wrap{
+    display:grid;
+    grid-template-columns:40px 1fr;
+    background:#1e1e1e;
+}
+.line-num{
+    background:#2d2d2d;
+    color:#aaa;
+    text-align:right;
+    padding:10px 4px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    line-height: 1.5;  /* 和textarea完全一致 */
+    overflow:hidden;
+    user-select:none;
+    white-space:pre;
+}
+#code{
+    background:#1e1e1e;
+    color:#d4d4d4;
+    padding:10px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    line-height:1.5;
+    resize:none;
+    border:none;
+    outline:none;
+    white-space:pre;
+}
+#preview{
+    border:none;
+    background:#ffffff;
+}
+</style>
+</head>
+<body>
+<div class="top-bar">
+    <button id="clearBtn">清空</button>
+    <button id="sampleBtn">載入範例</button>
+</div>
+<div class="wrap">
+    <div class="code-wrap">
+        <div class="line-num" id="lineNum">1</div>
+        <textarea id="code" spellcheck="false"></textarea>
+    </div>
+    <iframe id="preview"></iframe>
+</div>
+
+<script>
+const codeEl = document.getElementById('code')
+const previewEl = document.getElementById('preview')
+const lineNumEl = document.getElementById('lineNum')
+const clearBtn = document.getElementById('clearBtn')
+const sampleBtn = document.getElementById('sampleBtn')
+
+function render(){
+    previewEl.srcdoc = codeEl.value
+}
+// 重寫行號生成，用 \n 強制分行，配合 white-space:pre
+function updateLine(){
+    const lineCount = codeEl.value.split('\n').length
+    let numText = ''
+    for(let i = 1; i <= lineCount; i++){
+        numText += i + '\n'
+    }
+    lineNumEl.textContent = numText
+}
+// 捲動同步
+function syncScroll(){
+    lineNumEl.scrollTop = codeEl.scrollTop
+}
+
+codeEl.addEventListener('input',()=>{
+    render()
+    updateLine()
+})
+codeEl.addEventListener('scroll', syncScroll)
+
+clearBtn.onclick = ()=>{
+    codeEl.value = ''
+    render()
+    updateLine()
+}
+sampleBtn.onclick = ()=>{
+    codeEl.value = `<h1>歡迎使用 HTML 預覽器</h1>
+<p style="color:#2563eb">這裡可以直接寫 HTML、CSS、JS</p>
+<div style="padding:12px;background:#f0f7ff;border-radius:8px">
+  <p>測試文字</p>
+  <button onclick="alert('成功！')">點我測試JS</button>
+</div>
+<style>
+h1{font-family:system-ui}
+</style>`
+    render()
+    updateLine()
+}
+render()
+updateLine()
+</script>
+</body>
+</html>
